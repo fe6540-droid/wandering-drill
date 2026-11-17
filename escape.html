@@ -178,9 +178,8 @@ function c1(){const P=S.P,cold=S.w==='cold';
  {id:'i1',em:'shirt',cap:'옷 살펴보기',s:2,obs:`어르신 옷차림: 상의 ${P.top}, 하의 ${P.bot}, 신발 ${P.shoe}.`},
  {id:'i2',em:'sign',cap:'표지판',s:2,obs:`표지판: ${S.ep.loc}.`}];
  const slots=shuf([[11,26],[25,58],[12,72],[30,16],[72,18],[88,42],[76,64],[90,78],[60,12],[22,86],[8,46],[92,22]]);S.h1=sg.map((h,i)=>({...h,x:slots[i][0],y:slots[i][1]}));S.seen1={};S.sel1=new Set();
- S.hintMsg=()=>Object.keys(S.seen1).length<8?'● 버튼을 모두 눌러 관찰 기록을 모으세요. 눌러도 감점은 없어요.':'위 "배회·실종 치매환자 특성"과 비교해 보세요. 옷차림, 신발, 걸음, 시선이 어르신 자신의 모습이에요.';
+ S.hintMsg=()=>Object.keys(S.seen1).length<8?'● 버튼을 모두 눌러 관찰 기록을 모으세요. 눌러도 감점은 없어요.':'기록을 살펴보세요. 옷차림, 신발, 걸음, 시선이 어르신 자신의 모습이에요.';
  $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 1</span>발견 · ${S.ep.nm}</div><h1>이상한 점을 찾아라</h1><p class="hint">① 장면 속 ● 버튼을 눌러 관찰 기록을 모으세요 (눌러도 감점 없음). ② 기록을 보고 배회 신호 3개를 고르세요.</p>
- <div class="call"><b>배회·실종 치매환자 특성</b><br>• 계절에 맞지 않는 옷차림 • 짝짝이 신발·한쪽만 신기 • 같은 길을 맴돎 • 목적 없이 두리번거리며 걸음<br><span class="hint">쉬기, 쇼핑, 동행 산책, 길 찾기 같은 모습은 일상이에요.</span></div>
  ${scene(S.ep.k,S.h1.map(h=>({id:h.id,img:SPRU[h.em],x:h.x,y:h.y,lab:h.cap,show:h.cap})))}<div id="log"></div><div id="pick" hidden><h2>배회 신호 3개를 고르세요</h2><div class="opts" id="pc"></div><button class="go" id="jd" disabled>판정하기</button></div><div id="jlog"></div><button class="go" id="nx" hidden>다가가기</button></section>`;
  const refresh=()=>{const n=Object.keys(S.seen1).length;const obs=S.h1.filter(h=>S.seen1[h.id]&&h.s!==2);
   if(S.seen1.i1&&S.seen1.i2){S.notes.cl=`${P.top} 상의 · ${P.bot} 하의 · ${P.shoe}`;S.notes.loc=S.ep.loc}
@@ -189,7 +188,7 @@ function c1(){const P=S.P,cold=S.w==='cold';
  document.querySelectorAll('.hs').forEach(b=>b.onclick=()=>{const h=S.h1.find(x=>x.id===b.dataset.id);b.classList.add('done');if(!S.seen1[h.id]){S.seen1[h.id]=1;msg($('#log'),`<div class="fb" style="background:#eef5f3;color:var(--ink)"><img class="ic" src="${SPRU[h.em]}" alt=""> ${h.obs}</div>`)}refresh()});
  $('#jd').onclick=()=>{const picked=[...S.sel1].map(id=>S.h1.find(x=>x.id===id));const wrong=picked.filter(h=>h.s!==1);
   if(!wrong.length){document.querySelectorAll('#pc .opt').forEach(b=>{b.disabled=true;const h=S.h1.find(x=>x.id===b.dataset.id);if(h.s===1)b.classList.add('ok');b.classList.remove('mid')});S.notes.signs=picked.map(h=>h.lb).join(' · ');hud();$('#jd').remove();$('#jlog').innerHTML='<div class="fb ok">모두 맞아요! 어르신은 길을 잃은 상태로 보여요. 다가가 도와드려요.</div>';$('#nx').hidden=false;$('#nx').scrollIntoView({block:'nearest',behavior:'smooth'})}
-  else{wrong.forEach(h=>{const b=document.querySelector(`#pc .opt[data-id="${h.id}"]`);b.disabled=true;b.classList.remove('mid');b.classList.add('no');S.sel1.delete(h.id)});$('#jd').disabled=true;$('#jlog').innerHTML=pen(10*wrong.length,`${wrong.length}개는 일상적인 모습이에요(빨간색). 배회·실종 치매환자 특성과 비교해 다시 고르세요.`)}};
+  else{wrong.forEach(h=>{const b=document.querySelector(`#pc .opt[data-id="${h.id}"]`);b.disabled=true;b.classList.remove('mid');b.classList.add('no');S.sel1.delete(h.id)});$('#jd').disabled=true;$('#jlog').innerHTML=pen(10*wrong.length,`${wrong.length}개는 일상적인 모습이에요(빨간색). 기록을 다시 살펴보고 고르세요.`)}};
  $('#nx').onclick=()=>go(1)}
 /* ===== 챕터 2: 접근 — 대화 퍼즐 ===== */
 function c2(){const cold=S.w==='cold';
