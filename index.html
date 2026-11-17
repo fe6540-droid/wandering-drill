@@ -337,9 +337,14 @@ $('#res').onclick=()=>go('rs',{rc:S.ac});
 $('#cp').onclick=async()=>{const u=location.origin+location.pathname+'?c='+(CENTERS.indexOf(S.ac)+1);try{await navigator.clipboard.writeText(u);$('#m').className='okmsg';$('#m').textContent='복사했어요: '+u}catch(e){$('#m').className='err';$('#m').textContent=u}};
 $('#save').onclick=async()=>{const q={};QS.forEach(x=>q[x.id]=$('#'+x.id).checked?1:0);try{await setCfg(S.ac,{q,phone:+$('#phone').checked,msg:$('#msg').value.trim()});$('#m').className='okmsg';$('#m').textContent='저장했어요.'}catch(e){$('#m').className='err';$('#m').textContent=e==='pw'||e==='lock'?'권한이 없어요. 다시 로그인해 주세요.':'저장하지 못했어요. 연결을 확인해 주세요.'}}}}};
 const HEAD=[['time','일시'],['center','센터'],['patient','어르신 번호'],['score','신고서 점수'],['total','신고서 문항수'],['order_ok','순서 정답(1=정답)'],['order_tries','순서 시도 횟수'],...QS.map(q=>[q.id,q.t]),['phone','전화번호']];
+V.gb=()=>({h:`<h1>게임 순위 관리</h1><p class=lead>부적절한 닉네임은 '숨기기'로 순위표에서 뺄 수 있어요. 언제든 복구할 수 있어요.</p><div id=gbb><p class=lead>불러오는 중…</p></div><button class=link id=bk>← 돌아가기</button>`,
+async i(){$('#bk').onclick=()=>go('rs',{rc:S.rc||''});const load=async()=>{let r;try{r=API?await call({a:'bmlist',c:'',pw:S.pw}):[]}catch(e){r={err:1}}
+if(!Array.isArray(r)){$('#gbb').innerHTML='<p class=err>불러오지 못했어요. 다시 로그인해 주세요.</p>';return}
+$('#gbb').innerHTML=r.length?`<div class=tbl><table><tr><th>순위<th>닉네임<th>점수<th>시간<th>일시<th>관리</tr>${r.slice(0,200).map((x,i)=>`<tr class="${x.hidden?'hid':''}"><td>${i+1}<td>${esc(x.nick)}<td>${x.xp}<td>${Math.floor(x.sec/60)}:${String(x.sec%60).padStart(2,'0')}<td>${esc(String(x.time).slice(5,16))}<td><button class=rbtn data-row="${x.row}" data-v="${x.hidden?0:1}">${x.hidden?'복구':'숨기기'}</button>`).join('')}</table></div>`:'<p class=lead>아직 기록이 없어요.</p>';
+$$('#gbb .rbtn').forEach(b=>b.onclick=async()=>{b.disabled=true;try{const r=await call({a:'bhide',c:'',pw:S.pw,row:+b.dataset.row,v:+b.dataset.v});if(r.err)throw 0;load()}catch(e){b.disabled=false;alert('처리하지 못했어요. 다시 로그인해 주세요.')}})};load()}});
 V.rs=()=>{const m=S.role==='master';return{h:`<h1>${m?'광역치매센터 관리자':'응답 결과'}</h1>${m?`<div class=fld><label class=lab for=rf>센터 보기</label><div class=sel><select id=rf><option value="">전체 센터</option>${CENTERS.map(c=>`<option ${c===S.rc?'selected':''}>${c}</option>`).join('')}</select></div></div>`:`<span class=center-t>${S.rc}</span>`}<div id=rb><p class=lead>불러오는 중…</p></div>
-${m&&S.rc?'<button class="btn ghost" id=ed>이 센터 설정 열기</button>':''}<button class=link id=bk>← 돌아가기</button>`,
-async i(){const rf=$('#rf');rf&&(rf.onchange=()=>go('rs',{rc:rf.value}));const ed=$('#ed');ed&&(ed.onclick=()=>go('ac',{ac:S.rc}));
+${m&&S.rc?'<button class="btn ghost" id=ed>이 센터 설정 열기</button>':''}${m?'<button class="btn ghost" id=gb>게임 순위 관리</button>':''}<button class=link id=bk>← 돌아가기</button>`,
+async i(){const rf=$('#rf');rf&&(rf.onchange=()=>go('rs',{rc:rf.value}));const ed=$('#ed');ed&&(ed.onclick=()=>go('ac',{ac:S.rc}));const gb=$('#gb');gb&&(gb.onclick=()=>go('gb'));
 $('#bk').onclick=()=>m?(S.pw='',S.role='',go('home')):go('ac',{ac:S.rc});
 try{const all=await listResp(m?S.rc:S.ac),r=all.filter(x=>!+x.hidden);S.rows=r;const avg=k=>{const v=r.map(x=>+x[k]).filter(n=>n>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'-'};
 const pct=r.length?Math.round(r.reduce((a,x)=>a+(x.total?x.score/x.total:0),0)/r.length*100)+'%':'-';

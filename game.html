@@ -299,29 +299,38 @@ const BANK=[[m1a,m1b],[m2a,m2b],[m3a,m3b],[m4a,m4b],[m5a,m5b]];
 function render(){S.miss=0;S.tm=Date.now();hud();BANK[S.n][S.vars[S.n]]();window.scrollTo({top:0})}
 
 /* ===== 시작·기록·결과 ===== */
-const EX=[['단풍길산책',640,212],['다정한이웃',590,260],['호두과자',545,301],['골든타임',510,198],['충북지킴이',470,355]];
-function board(){const b=store('gt_board')||[];return[...EX.map(e=>({nick:e[0],xp:e[1],sec:e[2],ex:1})),...b].sort((a,b)=>b.xp-a.xp||a.sec-b.sec)}
-function boardHtml(me){const all=board();const top=all.slice(0,10);let h=top.map((r,i)=>`<div class="bl ${r===me?'me':''}"><span class="r">${i+1}</span><span class="n">${r.nick.replace(/[<>&]/g,'')}${r.ex?'<em>예시</em>':''}</span><span class="x">${r.xp}점</span><span class="t">${fmt(r.sec)}</span></div>`).join('');
- if(me&&!top.includes(me)){const i=all.indexOf(me);h+=`<div class="bl me"><span class="r">${i+1}</span><span class="n">${me.nick}</span><span class="x">${me.xp}점</span><span class="t">${fmt(me.sec)}</span></div>`}return h}
-function start(){clearInterval(S.tick);$('#hud').hidden=true;$('#path').hidden=true;
+const API='https://script.google.com/macros/s/AKfycbx9G-PAjHJH9Q6T4e9UouISIpnPeNI17ueOkLUfuBY6ICumjPJE9g4hnXzWurKf8es/exec';
+async function call(b){ /* API가 비어 있으면 이 기기에만 저장하는 체험 모드 */
+ if(!API){const L=store('gt_board')||[];if(b.a==='bsubmit'){L.push({...b.d,id:L.length+2,ts:Date.now()});store('gt_board',L);return{ok:1,id:L.length+1}}return L}
+ const r=await fetch(API,{method:'POST',body:JSON.stringify(b)});return r.json()}
+let BD=[],BOK=true;
+const cmp=(a,b)=>b.xp-a.xp||a.sec-b.sec||(a.id||0)-(b.id||0);
+async function loadBoard(){try{const r=await call({a:'blist'});if(!Array.isArray(r))throw 0;BD=r.sort(cmp);BOK=true}catch(e){BOK=false}}
+function boardHtml(meId){if(!BOK)return '<p class="hint">순위표를 불러오지 못했어요. 잠시 후 다시 열어 주세요.</p>';if(!BD.length)return '<p class="hint">아직 기록이 없어요. 첫 번째 도전자가 되어 보세요!</p>';
+ const top=BD.slice(0,10);const row=(r,i)=>`<div class="bl ${r.id===meId?'me':''}"><span class="r">${i+1}</span><span class="n">${String(r.nick).replace(/[<>&"']/g,'')}</span><span class="x">${r.xp}점</span><span class="t">${fmt(r.sec)}</span></div>`;
+ let h=top.map(row).join('');const i=BD.findIndex(r=>r.id===meId);if(meId&&i>=10)h+=row(BD[i],i);return h}
+async function start(){clearInterval(S.tick);$('#hud').hidden=true;$('#path').hidden=true;
  $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">배회·실종 치매환자 발견 모의훈련</span></div><h1>골든타임 미션</h1><p class="hint">길 잃은 어르신을 발견해 가족 품으로 돌려보내는 5개 퍼즐입니다. 매번 다른 어르신과 문제가 나와요.</p>
- <div><label class="lab" for="nick">닉네임</label><input class="nick" id="nick" maxlength="8" autocomplete="off" placeholder="2~8자 별명" value="${S.nick}"><div class="err" id="er"></div><p class="hint">실명이나 전화번호 대신 별명을 써 주세요. 순위표에 모두에게 보여요.</p></div>
+ <div><label class="lab" for="nick">닉네임</label><input class="nick" id="nick" maxlength="8" autocomplete="off" placeholder="2~8자 별명" value="${S.nick}"><div class="err" id="er"></div><p class="hint">실명이나 전화번호 대신 별명을 써 주세요. 순위표에 모든 참가자에게 보여요.</p></div>
  <button class="go" id="go">미션 시작</button></section>
- <section class="card"><h2>명예의 전당</h2><div class="board" id="bd">${boardHtml()}</div><p class="hint">점수가 높은 순, 같으면 빠른 순입니다. 지금은 이 기기에서의 기록만 보여요.</p></section>`;
+ <section class="card"><h2>명예의 전당</h2><div class="board" id="bd"><p class="hint">불러오는 중…</p></div><p class="hint">점수가 높은 순, 같으면 빠른 순입니다. 모든 참가자의 기록이 함께 보여요.</p></section>`;
  $('#go').onclick=()=>{const v=$('#nick').value.trim();const bad=!/^[0-9A-Za-z가-힣ㄱ-ㅎㅏ-ㅣ_ ]{2,8}$/.test(v)?'2~8자의 한글·영문·숫자로 입력해 주세요.':/\d{4,}/.test(v)?'숫자를 길게 쓰면 전화번호처럼 보여요. 별명으로 바꿔 주세요.':BAD_WORDS.some(w=>v.toLowerCase().includes(w))?'사용할 수 없는 표현이에요. 다른 별명을 써 주세요.':'';
-  if(bad){$('#er').textContent=bad;return}S.nick=v;begin()}}
-function begin(){let n;const last=store('gt_last');do{n=rnd(5)}while(n===last);store('gt_last',n);
+  if(bad){$('#er').textContent=bad;return}S.nick=v;begin()};
+ await loadBoard();const bd=$('#bd');if(bd)bd.innerHTML=boardHtml()}
+function begin(){const last=store('gt_last');let n;do{n=rnd(5)}while(n===last);store('gt_last',n);
  Object.assign(S,{pi:n,n:0,hearts:3,xp:0,fin:false,t0:Date.now()});
  S.tag='A01'+String(rnd(100000)).padStart(5,'0');S.place=PT[n].place;S.note=PT[n].note;
  S.vars=BANK.map(()=>rnd(2));$('#hud').hidden=false;$('#path').hidden=false;$('#xpn').textContent='';tickClock();clearInterval(S.tick);S.tick=setInterval(tickClock,1000);render()}
-function finish(){S.fin=true;clearInterval(S.tick);hud();const st=Math.max(1,S.hearts),s=sec();
- const rec={nick:S.nick,xp:S.xp,sec:s,stars:st,ts:Date.now()};const b=store('gt_board')||[];b.push(rec);store('gt_board',b.slice(-200));
- const t=S.xp>=560?'골든타임 지킴이':S.xp>=400?'든든한 이웃':'첫걸음 도우미';const all=board();const rank=all.indexOf(all.find(r=>r.ts===rec.ts))+1;
+async function finish(){S.fin=true;clearInterval(S.tick);hud();const st=Math.max(1,S.hearts),s=sec();
+ const t=S.xp>=560?'골든타임 지킴이':S.xp>=400?'든든한 이웃':'첫걸음 도우미';
  $('#stage').innerHTML=`<section class="card res"><div class="tagline" style="justify-content:center"><span class="badge">미션 완료</span></div><div class="reveal"><img src="${IMG[S.pi]}" alt=""></div><p class="who">${PT[S.pi].name} 어르신이 가족 품으로 돌아갔어요.</p><div class="stars">${[1,2,3].map(i=>star(i<=st)).join('')}</div><div class="title-get">${t}</div>
- <div class="stat"><div><b>${S.xp}</b><span>점수 / 700</span></div><div><b>${fmt(s)}</b><span>걸린 시간</span></div><div><b>${rank}위</b><span>전체 순위</span></div></div>
+ <div class="stat"><div><b>${S.xp}</b><span>점수 / 700</span></div><div><b>${fmt(s)}</b><span>걸린 시간</span></div><div><b id="rk">…</b><span>전체 순위</span></div></div>
  <button class="go" id="again">한 번 더 도전 (새 문제)</button><button class="go ghost" id="home">처음으로</button></section>
- <section class="card"><h2>명예의 전당</h2><div class="board" id="bd">${boardHtml(all.find(r=>r.ts===rec.ts))}</div></section>`;
- $('#again').onclick=begin;$('#home').onclick=start;$('#hud').hidden=true;$('#path').hidden=true;window.scrollTo({top:0})}
+ <section class="card"><h2>명예의 전당</h2><div class="board" id="bd"><p class="hint">기록을 저장하는 중…</p></div></section>`;
+ $('#again').onclick=begin;$('#home').onclick=start;$('#hud').hidden=true;$('#path').hidden=true;window.scrollTo({top:0});
+ let id=0,saved=true;try{const r=await call({a:'bsubmit',d:{nick:S.nick,xp:S.xp,sec:s,stars:st}});if(r.ok)id=r.id;else saved=false}catch(e){saved=false}
+ await loadBoard();const i=BD.findIndex(r=>r.id===id);$('#rk').textContent=i>=0?(i+1)+'위':'-';
+ $('#bd').innerHTML=(saved?'':'<p class="hint">기록을 저장하지 못했어요. 네트워크를 확인해 주세요.</p>')+boardHtml(id)}
 start();
 </script>
 
