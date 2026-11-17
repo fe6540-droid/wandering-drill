@@ -33,8 +33,11 @@ textarea{min-height:90px;resize:vertical}
 .btn.ghost{background:var(--card);color:var(--green-d);border:1.5px solid var(--green)}
 .btn.ghost:hover{background:var(--leaf)}
 .rbtn{font:inherit;font-size:.8rem;padding:5px 11px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink2);cursor:pointer}tr.hid td{color:#aaa;text-decoration:line-through}tr.hid td:last-child{text-decoration:none}
+a.btn{text-decoration:none;text-align:center}
 .btn.sm{min-height:46px;font-size:.95rem;width:auto;display:inline-block;padding:10px 18px}
 .link{background:none;border:0;font:inherit;color:var(--ink2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px 4px;font-size:.95rem}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:26px 0 0}.duo .btn{margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;text-decoration:none;font-size:1rem;min-height:74px}.duo .btn b{font-size:1.35rem;line-height:1.2}
+.vwrap{position:relative;aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:#000;margin:0 0 16px}.vwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
 .err{color:var(--bad);font-weight:600;margin:10px 0 0;min-height:1.4em}
 .okmsg{color:var(--green-d);font-weight:600}
@@ -222,10 +225,13 @@ V.home=()=>({h:`<header class=hero><h1>배회·실종 치매환자<br>발견 모
 <div class=block><label class=lab for=ct>치매안심센터 선택</label><div class=sel><select id=ct><option value="">우리 지역 센터를 선택하세요</option>${CENTERS.map(c=>`<option ${c===S.center?'selected':''}>${c}</option>`).join('')}</select></div></div>
 <section class=card><h2>배회인식표란?</h2><div class=tagbox><div class=tagimg><img src="${TAGIMG}" alt="배회인식표 예시"></div></div><p style="margin:0">${TAGTXT}</p></section>
 <button class=btn id=start>훈련 시작</button><p id=m class=err role=alert></p>
+<div class=duo><a class="btn ghost" href="game.html"><b>🎮</b>게임으로 배우기</a><button class="btn ghost" id=vid><b>▶</b>영상 보기</button></div>
 <footer class=foot><button class=link data-t=c>치매안심센터 관리자</button><button class=link data-t=m>광역치매센터 관리자</button></footer>`,
-i(){$('#ct').onchange=e=>S.center=e.target.value;$$('.foot .link').forEach(b=>b.onclick=()=>go('login',{t:b.dataset.t}));
+i(){$('#ct').onchange=e=>S.center=e.target.value;$('#vid').onclick=()=>go('video');$$('.foot .link').forEach(b=>b.onclick=()=>go('login',{t:b.dataset.t}));
 $('#start').onclick=async()=>{if(!S.center)return $('#m').textContent='먼저 치매안심센터를 선택해 주세요.';
 $('#start').disabled=true;S.cfg=await getCfg(S.center);let n;do{n=Math.floor(Math.random()*PT.length)}while(n===S.pi&&PT.length>1);S.pi=n;S.tries=0;S.slots=[];S.deck=null;S.okOrder=false;S.replay=false;go('t1')}}});
+/* ===== 영상 ===== */
+V.video=()=>({h:`<h1>영상으로 알아보기</h1><p class=lead>길 잃은 어르신을 발견했을 때 어떻게 하면 좋은지 영상으로 확인해 보세요.</p><div class=vwrap><iframe src="https://www.youtube-nocookie.com/embed/M9yLJDSKGSQ?rel=0&start=141" title="안내 영상" allow="accelerometer;encrypted-media;gyroscope;picture-in-picture;fullscreen" allowfullscreen loading=lazy referrerpolicy="strict-origin-when-cross-origin"></iframe></div><a class="btn ghost" href="https://youtu.be/M9yLJDSKGSQ?t=141" target=_blank rel=noopener>유튜브에서 열기</a><button class=link id=bk>← 처음으로</button>`,i(){$('#bk').onclick=()=>go('home')}});
 /* ===== 1단계: 신고서 (3쪽 마법사) ===== */
 const factsHTML=P=>`<dl><dt>이름</dt><dd>${P.name}</dd><dt>나이</dt><dd>${P.age}세</dd><dt>키</dt><dd>${P.h}cm</dd><dt>몸무게</dt><dd>${P.w}kg</dd><dt>발견 장소</dt><dd>${P.place}</dd><dt>상태</dt><dd>${P.note}</dd></dl>`;
 V.t1=()=>{const P=PT[S.pi];return{h:`${prog(0)}<form id=f autocomplete=off novalidate>
