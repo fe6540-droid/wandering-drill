@@ -1,4 +1,4 @@
-<title>골든타임 12분!</title>
+<title>골든타임 스토리</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
@@ -158,7 +158,7 @@ function hud(){$('#chs').innerHTML=CH.map((n,i)=>`<div class="${i<S.ch?'on':i===
 const pen=(n,m)=>{S.pen+=n;S.wrong++;tick();return`<div class="fb no" role="status">${m} <b>−${n}초</b></div>`};
 const msg=(el,h)=>{el.insertAdjacentHTML('afterbegin',h)};
 function home(){clearInterval(T);$('#hud').hidden=true;$('#hint').hidden=true;$('#nb').hidden=true;
- $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">골든타임 12분!</span>5개 챕터</div><h1>12분 안에 어르신을 가족에게 연결하라</h1><p class="hint">공원·시장·터미널 중 한 곳에서 시작해 발견 → 접근 → 확인·신고 → 보호 → 인계까지, 챕터마다 다른 퍼즐을 풀어요. 계절, 어르신, 단서가 매번 달라집니다.</p><div class="tg"><span>단서 수집</span><span>대화 퍼즐</span><span>112 통화</span><span>응급 대응</span><span>인계 메모</span></div><button class="go" id="go">입장하기</button></section>`;$('#go').onclick=start}
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">골든타임 스토리</span>5개 챕터</div><h1>12분 안에 어르신을 가족에게 연결하라</h1><p class="hint">공원·시장·터미널 중 한 곳에서 시작해 발견 → 접근 → 확인·신고 → 보호 → 인계까지, 챕터마다 다른 퍼즐을 풀어요. 계절, 어르신, 단서가 매번 달라집니다.</p><div class="tg"><span>단서 수집</span><span>대화 퍼즐</span><span>112 통화</span><span>응급 대응</span><span>인계 메모</span></div><button class="go" id="go">입장하기</button></section>`;$('#go').onclick=start}
 function start(){const p=rnd(5),ep=EPS[rnd(3)],w=rnd(2)?'cold':'hot';S={p,P:PT[p],ep,w,pen:0,wrong:0,hint:3,usedHint:0,ch:0,notes:{},t0:Date.now(),over:0,tag:'A01'+String(rnd(100000)).padStart(5,'0'),said:rnd(2)?'집에 가야 해요':'딸이 기다리고 있어요',
   state:w==='cold'?'추위에 떨고 계셨어요':'더위에 땀을 흘리며 목마르다고 하셨어요'};
  $('#hud').hidden=false;$('#hint').hidden=false;clearInterval(T);T=setInterval(tick,500);tick();$('#hint').onclick=giveHint;go(0)}
