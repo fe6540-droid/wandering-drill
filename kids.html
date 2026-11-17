@@ -229,7 +229,7 @@ function mzGen(N,loop,minLen){let best=null;
   while(q.length){const[r,c,s]=q.shift();if(r===h[0]&&c===h[1]){d=s;break}[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc])=>{const R=r+dr,C=c+dc,k=R*N+C;if(R<0||C<0||R>=N||C>=N||blk.has(k)||sn.has(k))return;sn.add(k);q.push([R,C,s+1])})}
   if(d<0)continue;const m={a,h,blk,d};if(d>=minLen)return m;if(!best||d>best.d)best=m}
  return best}
-const MZ=[{n:6,min:14,t:'home'},{n:7,min:20,t:'home'},{n:8,min:24,t:'car'}];
+const MZ=[{n:8,min:24,t:'home'},{n:10,min:34,t:'home'},{n:12,min:44,t:'car'}];
 function s3(){steps(2);K.mr=0;mround()}
 function mround(){const cfg=MZ[K.mr],N=cfg.n,car=cfg.t==='car',m=mzGen(N,.08,cfg.min);K.N=N;K.car=car;K.m=m;K.pos=m.a.slice();K.fl=new Set();
  for(let i=0;i<N*N;i++)if(!m.blk.has(i)&&Math.random()<.1&&i!==m.a[0]*N+m.a[1]&&i!==m.h[0]*N+m.h[1])K.fl.add(i);
