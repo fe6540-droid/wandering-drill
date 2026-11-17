@@ -32,6 +32,7 @@ textarea{min-height:90px;resize:vertical}
 .btn:hover{background:var(--green-d)}
 .btn.ghost{background:var(--card);color:var(--green-d);border:1.5px solid var(--green)}
 .btn.ghost:hover{background:var(--leaf)}
+.rbtn{font:inherit;font-size:.8rem;padding:5px 11px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink2);cursor:pointer}tr.hid td{color:#aaa;text-decoration:line-through}tr.hid td:last-child{text-decoration:none}
 .btn.sm{min-height:46px;font-size:.95rem;width:auto;display:inline-block;padding:10px 18px}
 .link{background:none;border:0;font:inherit;color:var(--ink2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px 4px;font-size:.95rem}
 .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
@@ -201,7 +202,8 @@ async function call(b){const r=await fetch(API,{method:'POST',body:JSON.stringif
 async function getCfg(c){let v=null;try{v=API?await call({a:'pubcfg',c}):ls('cfg:'+c)}catch(e){}v=v||{};return{...DEF,...v,q:{...DEF.q,...(v.q||{})}}}
 async function setCfg(c,d){if(API){const r=await call({a:'cfg',c,pw:S.pw,d});if(r.err)throw r.err}else ls('cfg:'+c,d)}
 async function addResp(d){if(API){const r=await call({a:'resp',d});if(r.err)throw r.err}else ls('resp',[...(ls('resp')||[]),d])}
-async function listResp(c){if(API){const r=await call({a:'list',c,pw:S.pw});if(r.err)throw r.err;return r}return(ls('resp')||[]).filter(x=>!c||x.center===c)}
+async function listResp(c){if(API){const r=await call({a:'list',c,pw:S.pw});if(r.err)throw r.err;return r}return(ls('resp')||[]).map((x,i)=>({...x,row:i+2})).filter(x=>(!c||x.center===c)&&(S.role==='master'||!+x.hidden))}
+async function hideResp(row,v){if(API){const r=await call({a:'hide',c:S.ac||S.rc||'',pw:S.pw,row,v});if(r.err)throw r.err;return}const a=ls('resp')||[];if(a[row-2])a[row-2].hidden=v;ls('resp',a)}
 async function doLogin(c,pw){if(!API)return{ok:1,role:c?'center':'master'};return call({a:'login',c,pw})}
 /* ===== 공통 ===== */
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -333,14 +335,15 @@ V.rs=()=>{const m=S.role==='master';return{h:`<h1>${m?'광역치매센터 관리
 ${m&&S.rc?'<button class="btn ghost" id=ed>이 센터 설정 열기</button>':''}<button class=link id=bk>← 돌아가기</button>`,
 async i(){const rf=$('#rf');rf&&(rf.onchange=()=>go('rs',{rc:rf.value}));const ed=$('#ed');ed&&(ed.onclick=()=>go('ac',{ac:S.rc}));
 $('#bk').onclick=()=>m?(S.pw='',S.role='',go('home')):go('ac',{ac:S.rc});
-try{const r=await listResp(m?S.rc:S.ac);S.rows=r;const avg=k=>{const v=r.map(x=>+x[k]).filter(n=>n>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'-'};
+try{const all=await listResp(m?S.rc:S.ac),r=all.filter(x=>!+x.hidden);S.rows=r;const avg=k=>{const v=r.map(x=>+x[k]).filter(n=>n>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'-'};
 const pct=r.length?Math.round(r.reduce((a,x)=>a+(x.total?x.score/x.total:0),0)/r.length*100)+'%':'-';
 const first=r.length?Math.round(r.filter(x=>+x.order_ok&&+x.order_tries===1).length/r.length*100)+'%':'-';
 const by={};r.forEach(x=>by[x.center]=(by[x.center]||0)+1);
 $('#rb').innerHTML=`<div class=stats><div class=stat><b>${r.length}명</b><span>참여</span></div><div class=stat><b>${pct}</b><span>신고서 평균 정답률</span></div><div class=stat><b>${first}</b><span>순서 첫 시도 정답률</span></div><div class=stat><b>${avg('q7')}</b><span>만족도 (5점)</span></div></div>
 ${m&&!S.rc?`<h2>센터별 참여</h2><div class=tbl><table><tr><th>센터<th>참여</tr>${CENTERS.map(c=>`<tr><td>${c.replace(' 치매안심센터','')}<td>${by[c]||0}명`).join('')}</table></div>`:''}
 <button class=btn id=csv ${r.length?'':'disabled'}>엑셀용 CSV 내려받기</button>
-<h2 style="margin-top:20px">최근 응답</h2>${r.length?`<div class=tbl><table><tr><th>일시<th>센터<th>점수<th>순서<th>한줄평<th>전화번호</tr>${r.slice(-50).reverse().map(x=>`<tr><td>${esc(x.time)}<td>${esc(String(x.center).replace(' 치매안심센터',''))}<td>${x.score}/${x.total}<td>${+x.order_ok?'○':'×'}<td>${esc(x.q8)}<td>${esc(x.phone)}`).join('')}</table></div>`:'<p class=lead>아직 응답이 없어요.</p>'}`;
+<h2 style="margin-top:20px">최근 응답</h2>${r.length?`<div class=tbl><table><tr><th>일시<th>센터<th>점수<th>순서<th>한줄평<th>전화번호<th>관리</tr>${(m?all:r).slice(-50).reverse().map(x=>`<tr class="${+x.hidden?'hid':''}"><td>${esc(x.time)}<td>${esc(String(x.center).replace(' 치매안심센터',''))}<td>${x.score}/${x.total}<td>${+x.order_ok?'○':'×'}<td>${esc(x.q8)}<td>${esc(x.phone)}<td><button class=rbtn data-row="${x.row}" data-v="${+x.hidden?0:1}">${+x.hidden?'복구':'숨기기'}</button>`).join('')}</table></div>${m?'':'<p class=lead style="font-size:.85rem">잘못 입력된 응답은 \'숨기기\'로 통계에서 뺄 수 있어요. 복구는 광역치매센터 관리자만 할 수 있어요.</p>'}`:'<p class=lead>아직 응답이 없어요.</p>'}`;
+$$('.rbtn').forEach(b=>b.onclick=async()=>{const v=+b.dataset.v;if(v&&!confirm('이 응답을 숨길까요?\n통계와 목록에서 빠지며, 복구는 광역치매센터 관리자만 할 수 있어요.'))return;b.disabled=true;try{await hideResp(+b.dataset.row,v);go('rs',{rc:S.rc})}catch(e){b.disabled=false;alert('처리하지 못했어요. 다시 로그인해 주세요.')}});
 $('#csv').onclick=()=>{const q=v=>{let s=String(v??'');if(/^[=+\-@]/.test(s))s="'"+s;return'"'+s.replace(/"/g,'""')+'"'};
 const s='﻿'+[HEAD.map(h=>q(h[1])).join(','),...S.rows.map(r=>HEAD.map(h=>q(r[h[0]])).join(','))].join('\r\n');
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/csv'}));a.download='모의훈련_응답.csv';a.click()}}
