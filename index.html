@@ -235,7 +235,7 @@ V.video=()=>({h:`<h1>영상으로 알아보기</h1><p class=lead>길 잃은 어�
 /* ===== 1단계: 신고서 (3쪽 마법사) ===== */
 const factsHTML=P=>`<dl><dt>이름</dt><dd>${P.name}</dd><dt>나이</dt><dd>${P.age}세</dd><dt>키</dt><dd>${P.h}cm</dd><dt>몸무게</dt><dd>${P.w}kg</dd><dt>발견 장소</dt><dd>${P.place}</dd><dt>상태</dt><dd>${P.note}</dd></dl>`;
 V.t1=()=>{const P=PT[S.pi];return{h:`${prog(0)}<form id=f autocomplete=off novalidate>
-<section data-p=0><p class=pg>신고서 1/3 · 정보 확인</p><h1>실종자 정보를 확인해요</h1><p class=lead>배회인식표를 스캔하면 이런 정보가 나와요. 사진과 정보를 보고 신고서를 작성해 보세요.</p>
+<section data-p=0><p class=pg>신고서 1/3 · 정보 확인</p><h1>가상 어르신 정보를 확인해요</h1><p class=lead>훈련을 위해 만든 가상의 치매 어르신 정보예요. 사진과 정보를 보고 신고서를 작성해 보세요. (실제 배회인식표에는 이름·주소가 없고 고유번호만 적혀 있어요. 경찰이 번호를 조회해 가족에게 연락합니다.)</p>
 <div class=scene><div class=photo><img src="${P.img}" alt="길을 잃은 어르신 사진"></div><aside class=facts><h3>인식표 QR 정보</h3>${tagBlock(P.tag)}${factsHTML(P)}</aside></div>
 <div class=fld><label class=lab for=rn>신고자 성명 <small style="font-weight:400;color:var(--ink2)">(연습용 · 저장 안 돼요)</small></label><input type=text id=rn maxlength=20></div>
 <div class=fld><label class=lab for=rt>발견 일시</label><input type=text id=rt value="${now()}"></div>
