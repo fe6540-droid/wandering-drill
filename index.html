@@ -198,7 +198,7 @@ const DEF={q:{q1:0,q2:1,q3:0,q4:1,q5:1,q6:1,q7:1,q8:1},phone:0,msg:''};
 /* ===== 저장소 ===== */
 const ls=(k,v)=>{try{return v===undefined?JSON.parse(localStorage.getItem(k)||'null'):localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}};
 async function call(b){const r=await fetch(API,{method:'POST',body:JSON.stringify(b)});return r.json()}
-async function getCfg(c){let v=null;try{v=API?await(await fetch(API+'?c='+encodeURIComponent(c))).json():ls('cfg:'+c)}catch(e){}v=v||{};return{...DEF,...v,q:{...DEF.q,...(v.q||{})}}}
+async function getCfg(c){let v=null;try{v=API?await call({a:'pubcfg',c}):ls('cfg:'+c)}catch(e){}v=v||{};return{...DEF,...v,q:{...DEF.q,...(v.q||{})}}}
 async function setCfg(c,d){if(API){const r=await call({a:'cfg',c,pw:S.pw,d});if(r.err)throw r.err}else ls('cfg:'+c,d)}
 async function addResp(d){if(API){const r=await call({a:'resp',d});if(r.err)throw r.err}else ls('resp',[...(ls('resp')||[]),d])}
 async function listResp(c){if(API){const r=await call({a:'list',c,pw:S.pw});if(r.err)throw r.err;return r}return(ls('resp')||[]).filter(x=>!c||x.center===c)}
