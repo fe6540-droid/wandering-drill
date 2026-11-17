@@ -1,4 +1,4 @@
-<title>골든타임 스토리</title>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>골든타임 스토리</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
@@ -304,3 +304,4 @@ function end(win){S.over=1;clearInterval(T);const r=rem(),sec=Math.floor((Date.n
  $('#stage').innerHTML=`<section class="card res" style="text-align:center"><div class="tagline" style="justify-content:center"><span class="badge">${win?'탈출 성공':'시간 종료'}</span></div>${win?`<div class="reveal" style="width:120px;aspect-ratio:42/72;box-shadow:none;background:linear-gradient(#bfe8fb,#e9f7ef);border-radius:12px"><img src="${personURL(S.p,S.P,S.o)}" alt=""></div>`:''}<div class="stars" style="display:flex;justify-content:center;gap:8px">${[1,2,3].map(i=>star(i<=st)).join('')}</div><div class="big">${win?`${S.P.n} 어르신, 가족 품으로`:'아쉬워요, 한 번 더!'}</div><p>${win?`걸린 시간 ${fmt(sec)} (감점 포함) · 힌트 ${S.usedHint}번 · 실수 ${S.wrong}번`:'단서를 모으고 신고·보호·인계까지 이어 가는 연습을 다시 해 보세요.'}</p>${win?`<p>점수 <b>${pts}</b></p>`:''}<button class="go" id="again">새로운 상황으로 다시 하기</button><button class="go ghost" id="hm">처음으로</button></section>`;$('#again').onclick=start;$('#hm').onclick=home;window.scrollTo({top:0})}
 home();
 </script>
+</body></html>

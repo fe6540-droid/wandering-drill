@@ -158,8 +158,8 @@ function scene(kind,hs,opt={}){const P=S.P;return `<div class="scn" id="scn"><im
 const PT=[{n:'김순자',top:'분홍색',bot:'베이지',shoe:'흰색 운동화'},{n:'박영수',top:'하늘색',bot:'남색',shoe:'회색 운동화'},{n:'이정희',top:'베이지',bot:'남색',shoe:'흰색 운동화'},{n:'최만석',top:'갈색',bot:'진회색',shoe:'검정 구두'},{n:'한복순',top:'보라색',bot:'검정',shoe:'자주색 운동화'}];
 const EPS=[{k:'park',nm:'행복공원',loc:'행복공원 동문 분수대 오른쪽 벤치',w:['공원 어디쯤이에요','나무 많은 곳이에요','공원 근처 길이에요']},{k:'market',nm:'중앙시장',loc:'중앙시장 정문 앞 파란 간판 약국 옆 횡단보도',w:['시장 근처예요','큰길 쪽이에요','저기 약국 쪽이에요']},{k:'terminal',nm:'버스터미널',loc:'버스터미널 3번 승강장 앞 편의점 맞은편',w:['버스 타는 데예요','터미널 어딘가예요','큰 건물 앞이에요']}];
 const $=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n),shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
-let K={snd:true};
-try{K.snd=localStorage.getItem('kid_snd')!=='0'}catch(e){}
+let K={snd:false};
+try{K.snd=localStorage.getItem('kid_snd')==='1'}catch(e){}
 function say(t){if(!K.snd||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=.9;u.pitch=1.15;speechSynthesis.speak(u)}catch(e){}}
 function sndUI(){$('#snd').textContent=K.snd?'🔊':'🔇'}
 $('#snd').onclick=()=>{K.snd=!K.snd;try{localStorage.setItem('kid_snd',K.snd?'1':'0')}catch(e){}sndUI();if(K.snd&&K.say)say(K.say);else try{speechSynthesis.cancel()}catch(e){}};sndUI();
