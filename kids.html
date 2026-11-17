@@ -52,6 +52,7 @@ h1{font-family:var(--disp);font-weight:400;font-size:1.75rem;line-height:1.25;ma
 .mc.b{background:#86d577}
 .mc img{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated;object-fit:contain}
 .mc.pl img{inset:6% 14%;width:72%;height:88%}
+.mc.gp img{inset:6% 14%;width:72%;height:88%}
 .mc.nb{outline:3px dashed #fff;outline-offset:-5px;cursor:pointer}
 .dp{display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(2,58px);gap:8px;justify-content:center}
 .dp button{font-size:1.6rem;border:3px solid var(--navy);border-radius:16px;background:#fff;cursor:pointer;box-shadow:0 4px 0 #cfd8dc}
@@ -146,6 +147,8 @@ const SPRU={
  tag:spr(x=>{EL(x,12,12,11,8,'#187838');EL(x,12,12,9,6,'#fff');PR(x,6,10,12,5,'#e6f4ea');PR(x,7,11,10,1,'#2f9a52');PR(x,7,13,6,1,'#2f9a52')}),
  label:spr(x=>{P_(x,[[2,5,20,15,'#e8d8b8'],[4,7,16,11,'#fff'],[6,9,12,1,'#2f9a52'],[6,12,9,1,'#2f9a52'],[6,15,6,1,'#2f9a52'],[2,5,20,1,'#c9b48c']]);for(let i=0;i<10;i++)PR(x,3+i*2,19,1,1,'#8a7a5a')})};
 SPRU.walk=spr(x=>{P_(x,[[2,3,14,3,'#d9423a'],[16,0,3,9,'#d9423a'],[19,2,3,5,'#d9423a'],[3,14,6,7,'#6b5030'],[12,16,6,7,'#6b5030'],[3,20,6,2,'#222'],[12,22,6,2,'#222']])});
+SPRU.car=spr(x=>{P_(x,[[2,12,22,8,'#f4f6f8'],[2,15,22,3,'#2d6cb0'],[6,7,13,6,'#f4f6f8'],[8,8,4,4,'#9bd7f2'],[13,8,4,4,'#9bd7f2'],[9,4,3,3,'#e33a3a'],[12,4,3,3,'#3a6cf0'],[3,13,2,2,'#ffd34d'],[22,13,2,2,'#ff8a5c'],[5,19,5,5,'#222'],[16,19,5,5,'#222'],[7,21,1,1,'#999'],[18,21,1,1,'#999']])});
+SPRU.bld=spr(x=>{P_(x,[[2,5,22,18,'#8f9aa3'],[1,3,24,3,'#5c6770'],[4,8,4,4,'#ffe28a'],[11,8,4,4,'#ffe28a'],[18,8,4,4,'#ffe28a'],[4,15,4,4,'#ffe28a'],[18,15,4,4,'#ffe28a'],[11,16,4,7,'#6b5030']])});
 SPRU.ask=spr(x=>{EL(x,12,9,10,7,'#fff');P_(x,[[5,14,4,4,'#fff'],[10,6,4,3,'#d9423a'],[8,9,8,5,'#f4d9a8'],[11,11,2,3,'#8a5a30']])});
 function rndO(w){const A=w==='cold'?['scarf','beanie','cap']:['hat','cap','towel','none'];return{acc:A[Math.floor(Math.random()*A.length)],gl:Math.random()<.4?1:0,mask:Math.random()<.5?1:0}}
 const ACCT={scarf:'빨간 목도리',beanie:'빨간 털모자',cap:'파란 모자',hat:'밀짚모자',towel:'흰 수건',none:''};
@@ -212,31 +215,41 @@ function s2b(){K.ph='';const want='112';
   K.ph+=k;$('#scr').textContent=K.ph;mark();
   if(K.ph.length===3){document.querySelectorAll('#pad button').forEach(x=>x.classList.remove('nx'));toast('연결됐어요! “여기는 '+K.ep.nm+'이에요.”',1);say('연결됐어요! 여기는 '+K.ep.nm+'이에요. 어른이 말해 줘요.');
    $('#stage').querySelector('.card').insertAdjacentHTML('beforeend','<button class="big" id="nx">다음 ▶</button>');$('#nx').onclick=s3}})}
-/* ---- 3. 집 찾아 주기 (미로) ---- */
-const N=6;
-function mazeGen(){for(let t=0;t<400;t++){const corners=[[0,0],[0,N-1],[N-1,0],[N-1,N-1]],a=corners[rnd(4)],h=[N-1-a[0],N-1-a[1]],blk=new Set();
-  while(blk.size<9){const r=rnd(N),c=rnd(N),k=r*N+c;if(k===a[0]*N+a[1]||k===h[0]*N+h[1])continue;blk.add(k)}
-  const q=[[a[0],a[1],0]],seen=new Set([a[0]*N+a[1]]);let d=-1;
-  while(q.length){const[r,c,s]=q.shift();if(r===h[0]&&c===h[1]){d=s;break}[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc])=>{const R=r+dr,C=c+dc,k=R*N+C;if(R<0||C<0||R>=N||C>=N||blk.has(k)||seen.has(k))return;seen.add(k);q.push([R,C,s+1])})}
-  if(d>=N*2-2)return{a,h,blk}}
- return{a:[N-1,0],h:[0,N-1],blk:new Set([7,8,13,14,15,20,21])}}
-function s3(){steps(2);const m=mazeGen();K.m=m;K.pos=m.a.slice();K.fl=new Set();for(let i=0;i<N*N;i++)if(!m.blk.has(i)&&Math.random()<.12&&i!==m.a[0]*N+m.a[1]&&i!==m.h[0]*N+m.h[1])K.fl.add(i);
- show(`<section class="card"><p class="q">🏠 집에 가는 길을 도와요!</p><p class="sub">할머니·할아버지를 집까지 안내해 주세요. 나무는 지나갈 수 없어요.</p><div class="maze" id="mz"></div><div class="dp"><button class="u" data-d="u" aria-label="위">⬆️</button><button class="l" data-d="l" aria-label="왼쪽">⬅️</button><button class="d" data-d="d" aria-label="아래">⬇️</button><button class="r" data-d="r" aria-label="오른쪽">➡️</button></div><div class="toast" id="toast">화살표를 누르거나 하얀 점선 칸을 눌러요.</div></section>`,'집에 가는 길을 도와요! 화살표를 눌러 어르신을 집으로 안내해요.');
+/* ---- 3. 미로 (3판: 6×6 → 7×7 → 8×8, 마지막은 경찰차가 어르신께) ---- */
+function mzGen(N,loop,minLen){let best=null;
+ for(let t=0;t<300;t++){const blk=new Set(),ix=(r,c)=>r*N+c;for(let i=0;i<N*N;i++)blk.add(i);
+  const seen=new Set([0]),st=[[0,0]];blk.delete(0);
+  while(st.length){const[r,c]=st[st.length-1],nb=[[r-2,c],[r+2,c],[r,c-2],[r,c+2]].filter(([a,b])=>a>=0&&b>=0&&a<N&&b<N&&!seen.has(ix(a,b)));
+   if(!nb.length){st.pop();continue}const[a,b]=nb[rnd(nb.length)];seen.add(ix(a,b));blk.delete(ix(a,b));blk.delete(ix((r+a)/2,(c+b)/2));st.push([a,b])}
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){if(!blk.has(ix(r,c)))continue;
+   if(N%2===0&&(r===N-1||c===N-1)){if(Math.random()<.45)blk.delete(ix(r,c));continue}
+   if((r%2)!==(c%2)&&r>0&&c>0&&r<N-1&&c<N-1&&Math.random()<loop)blk.delete(ix(r,c))}
+  const a=[N-1,0],h=[0,N-1];blk.delete(ix(a[0],a[1]));blk.delete(ix(h[0],h[1]));
+  const q=[[a[0],a[1],0]],sn=new Set([ix(a[0],a[1])]);let d=-1;
+  while(q.length){const[r,c,s]=q.shift();if(r===h[0]&&c===h[1]){d=s;break}[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc])=>{const R=r+dr,C=c+dc,k=R*N+C;if(R<0||C<0||R>=N||C>=N||blk.has(k)||sn.has(k))return;sn.add(k);q.push([R,C,s+1])})}
+  if(d<0)continue;const m={a,h,blk,d};if(d>=minLen)return m;if(!best||d>best.d)best=m}
+ return best}
+const MZ=[{n:6,min:14,t:'home'},{n:7,min:20,t:'home'},{n:8,min:24,t:'car'}];
+function s3(){steps(2);K.mr=0;mround()}
+function mround(){const cfg=MZ[K.mr],N=cfg.n,car=cfg.t==='car',m=mzGen(N,.08,cfg.min);K.N=N;K.car=car;K.m=m;K.pos=m.a.slice();K.fl=new Set();
+ for(let i=0;i<N*N;i++)if(!m.blk.has(i)&&Math.random()<.1&&i!==m.a[0]*N+m.a[1]&&i!==m.h[0]*N+m.h[1])K.fl.add(i);
+ const ttl=car?'🚓 경찰차가 어르신께 가요!':'🏠 집에 가는 길을 도와요!',sub=car?'경찰차를 어르신이 계신 곳까지 안내해 주세요. 나무가 있으면 지나갈 수 없어요. 막다른 길도 있어요!':'할머니·할아버지를 집까지 안내해 주세요. 나무가 있으면 지나갈 수 없어요.';
+ show(`<section class="card"><p class="q">${ttl} (${K.mr+1}/3)</p><p class="sub">${sub}</p><div class="maze" id="mz" style="grid-template-columns:repeat(${N},minmax(0,1fr))"></div><div class="dp"><button class="u" data-d="u" aria-label="위">⬆️</button><button class="l" data-d="l" aria-label="왼쪽">⬅️</button><button class="d" data-d="d" aria-label="아래">⬇️</button><button class="r" data-d="r" aria-label="오른쪽">➡️</button></div><div class="toast" id="toast">화살표를 누르거나 하얀 점선 칸을 눌러요.</div></section>`,ttl.replace(/[^가-힣 !]/g,'')+' 화살표를 눌러 안내해요.');
  drawM();document.querySelectorAll('.dp button').forEach(b=>b.onclick=()=>mv(b.dataset.d));
- K.kd=e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key];if(k){e.preventDefault();mv(k)}};document.addEventListener('keydown',K.kd)}
-function drawM(){const m=K.m,[pr,pc]=K.pos;let h='';
+ document.removeEventListener('keydown',K.kd);K.kd=e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key];if(k){e.preventDefault();mv(k)}};document.addEventListener('keydown',K.kd)}
+function drawM(){const m=K.m,N=K.N,[pr,pc]=K.pos;let h='';
  for(let r=0;r<N;r++)for(let c=0;c<N;c++){const k=r*N+c,cls=['mc',(r+c)%2?'b':''];let im='';
-  if(m.blk.has(k))im=`<img src="${KS.tree}" alt="나무">`;else if(r===m.h[0]&&c===m.h[1])im=`<img src="${KS.house}" alt="집">`;else if(K.fl.has(k))im=`<img src="${KS.flower}" alt="">`;
-  if(r===pr&&c===pc){cls.push('pl');im=`<img src="${personURL(K.p,K.P,K.o)}" alt="어르신">`}
+  if(m.blk.has(k))im=`<img src="${KS.tree}" alt="나무">`;else if(r===m.h[0]&&c===m.h[1]){if(K.car){im=`<img src="${personURL(K.p,K.P,K.o)}" alt="어르신">`;cls.push('gp')}else im=`<img src="${KS.house}" alt="집">`}else if(K.fl.has(k))im=`<img src="${KS.flower}" alt="">`;
+  if(r===pr&&c===pc){if(K.car)im=`<img src="${SPRU.car}" alt="경찰차">`;else{cls.push('pl');im=`<img src="${personURL(K.p,K.P,K.o)}" alt="어르신">`}}
   else if(Math.abs(r-pr)+Math.abs(c-pc)===1&&!m.blk.has(k))cls.push('nb');
   h+=`<button class="${cls.join(' ')}" data-r="${r}" data-c="${c}" aria-label="칸">${im}</button>`}
- $('#mz').innerHTML=h;document.querySelectorAll('.mc.nb').forEach(b=>b.onclick=()=>{const r=+b.dataset.r,c=+b.dataset.c;go(r,c)})}
+ $('#mz').innerHTML=h;document.querySelectorAll('.mc.nb').forEach(b=>b.onclick=()=>go(+b.dataset.r,+b.dataset.c))}
 function mv(d){const[pr,pc]=K.pos,dd={u:[-1,0],d:[1,0],l:[0,-1],r:[0,1]}[d];go(pr+dd[0],pc+dd[1])}
-function go(r,c){const m=K.m;if(r<0||c<0||r>=N||c>=N){toast('여기는 길의 끝이에요. 다른 쪽으로 가요!');return}
+function go(r,c){const m=K.m,N=K.N;if(r<0||c<0||r>=N||c>=N){toast('여기는 길의 끝이에요. 다른 쪽으로 가요!');return}
  if(m.blk.has(r*N+c)){toast('나무가 있어서 지나갈 수 없어요. 돌아가요!');say('나무가 있어요. 돌아가요!');return}
  K.pos=[r,c];drawM();
- if(r===m.h[0]&&c===m.h[1]){document.removeEventListener('keydown',K.kd);toast('집에 도착했어요! 🎉',1);say('집에 도착했어요! 잘했어요!');
-  $('#stage').querySelector('.card').insertAdjacentHTML('beforeend','<button class="big" id="nx">다음 ▶</button>');document.querySelectorAll('.dp button').forEach(b=>b.disabled=true);$('#nx').onclick=fin}}
+ if(r===m.h[0]&&c===m.h[1]){document.removeEventListener('keydown',K.kd);const last=K.mr>=2,t=K.car?'경찰차가 어르신을 만났어요! 🎉':'집에 도착했어요! 🎉';toast(t,1);say(K.car?'경찰차가 어르신을 만났어요! 잘했어요!':'집에 도착했어요! 잘했어요!');
+  $('#stage').querySelector('.card').insertAdjacentHTML('beforeend',`<button class="big" id="nx">${last?'다음 ▶':'다음 길 ▶'}</button>`);document.querySelectorAll('.dp button').forEach(b=>b.disabled=true);$('#nx').onclick=()=>{if(last)fin();else{K.mr++;mround()}}}}
 /* ---- 4. 마무리 ---- */
 function fin(){steps(3);
  show(`<section class="card" style="text-align:center"><h1>참 잘했어요! 🎉</h1><div class="rev"><img src="${personURL(K.p,K.P,K.o)}" alt=""></div><p class="q">${K.P.n} 어르신이<br>가족 품으로 돌아가셨어요!</p><div class="prom" style="text-align:left"><div><b>1</b>이상하면 멈춰요</div><div><b>2</b>어른께 알려요</div><div><b>3</b>어른이 112에 전화해요</div></div><p class="note" style="text-align:left">보호자·선생님께: 아이가 길을 잃거나 위급한 상황을 보면, 혼자 해결하지 말고 가까운 어른(경찰관·가게 직원 등)께 도움을 청하도록 알려 주세요.</p><button class="big" id="again">한 번 더 해 볼래요! 🔁</button><a class="big ghost" style="text-decoration:none;display:block" href="games.html">다른 게임 하러 가기</a></section>`,'참 잘했어요! 어르신이 가족 품으로 돌아가셨어요. 이상하면 멈추고, 어른께 알리고, 어른이 일일이에 전화해요.');

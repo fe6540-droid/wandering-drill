@@ -33,7 +33,7 @@ p{margin:0;line-height:1.55}.hint{font-size:.85rem;color:var(--mute)}
 
 .hud{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
 .clock{font-family:var(--display);font-size:1.4rem;color:var(--sun);font-variant-numeric:tabular-nums;line-height:1;text-align:right}.clock.low{color:var(--coral)}.clock small{display:block;font-family:var(--body);font-size:.62rem;color:#bfe3da;margin-top:3px}
-.chs{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.chs div{font-size:.66rem;font-weight:700;color:#9cc4bd;text-align:center}.chs div i{display:block;height:7px;border-radius:9px;background:#ffffff26;margin-bottom:3px}.chs div.on i{background:var(--mint)}.chs div.now i{background:var(--sun)}.chs div.now{color:#fff}
+.chs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.chs div{font-size:.62rem;font-weight:700;color:#9cc4bd;text-align:center}.chs div i{display:block;height:7px;border-radius:9px;background:#ffffff26;margin-bottom:3px}.chs div.on i{background:var(--mint)}.chs div.now i{background:var(--sun)}.chs div.now{color:#fff}
 .scn{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1/1;background:#9ad;border:4px solid #12292e}
 .bgs{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}.pt,.hs img,.reveal img,.ic{image-rendering:pixelated}.ic{width:22px;height:22px;vertical-align:-5px}
 .pt{position:absolute;left:50%;bottom:6%;height:64%;transform:translateX(-50%)}
@@ -58,6 +58,17 @@ p{margin:0;line-height:1.55}.hint{font-size:.85rem;color:var(--mute)}
 .blank{display:inline-block;min-width:92px;border:0;border-bottom:3px solid var(--night2);padding:0 6px;text-align:center;font-weight:700;color:var(--night2);background:#ffffffaa;border-radius:6px 6px 0 0;cursor:pointer;font:inherit;font-size:.9rem}.blank.sel{background:#fff;box-shadow:0 0 0 3px #ffc83d88}.blank.ok{color:#0d5b3f;border-color:#1e9e6e}.blank.no{color:#8a2a20;border-color:var(--coral)}
 .tagsvg{width:min(250px,100%);display:block;margin:0 auto}
 .tg{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}.tg span{font-size:.72rem;background:#e6f6f1;color:var(--night2);border-radius:99px;padding:2px 9px;font-weight:700}
+
+.maze2{display:grid;gap:0;width:100%;aspect-ratio:1/1;border:3px solid #12292e;border-radius:10px;overflow:hidden;background:#3b4a52;touch-action:manipulation}
+.mx{position:relative;min-width:0;min-height:0;overflow:hidden;border:0;padding:0;background:#3b4a52;font:inherit;cursor:default}.mx.b{background:#44545c}
+.mx.tr{background:#6d6a3a}
+.mx.nb{outline:2px dashed #ffffffaa;outline-offset:-3px;cursor:pointer}
+.mx img{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated;object-fit:contain}
+.mx.gp img{inset:3% 12%;width:76%;height:94%}
+.mzbar{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.85rem;margin:6px 0}.mzbar i{flex:1;height:10px;border-radius:9px;background:#ffffff26;overflow:hidden}.mzbar i b{display:block;height:100%;width:100%;background:var(--mint);transition:width .25s linear}.mzbar.late i b{background:var(--coral)}
+.dp2{display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(2,52px);gap:8px;justify-content:center;margin:12px 0 4px}
+.dp2 button{font-size:1.5rem;border:2px solid #12292e;border-radius:14px;background:#fff;cursor:pointer}
+.dp2 .u{grid-column:2;grid-row:1}.dp2 .l{grid-column:1;grid-row:2}.dp2 .d{grid-column:2;grid-row:2}.dp2 .r{grid-column:3;grid-row:2}
 </style>
 <div class="wrap">
  <a class="back" href="games.html">← 게임 선택으로</a>
@@ -72,7 +83,7 @@ const EPS=[{k:'park',nm:'행복공원',loc:'행복공원 동문 분수대 오른
 const $=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n),shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 const star=o=>`<svg viewBox="0 0 24 24" style="width:50px;height:50px"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="${o?'#ffc83d':'#d5e3e0'}"/></svg>`;
-const TOTAL=720,CH=['발견','접근','확인·신고','보호','인계'];let S={},T=null;
+const TOTAL=720,CH=['발견','접근','확인·신고','보호','출동','인계'];let S={},T=null;
 /* ===== 도트 그래픽 (160×160 장면, 40×66 인물, 24×24 아이콘) — 전부 코드로 그림 ===== */
 function mk(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.imageSmoothingEnabled=false;return[c,x]}
 const PR=(x,X,Y,w,h,c)=>{x.fillStyle=c;x.fillRect(X,Y,w,h)};
@@ -149,6 +160,8 @@ const SPRU={
  tag:spr(x=>{EL(x,12,12,11,8,'#187838');EL(x,12,12,9,6,'#fff');PR(x,6,10,12,5,'#e6f4ea');PR(x,7,11,10,1,'#2f9a52');PR(x,7,13,6,1,'#2f9a52')}),
  label:spr(x=>{P_(x,[[2,5,20,15,'#e8d8b8'],[4,7,16,11,'#fff'],[6,9,12,1,'#2f9a52'],[6,12,9,1,'#2f9a52'],[6,15,6,1,'#2f9a52'],[2,5,20,1,'#c9b48c']]);for(let i=0;i<10;i++)PR(x,3+i*2,19,1,1,'#8a7a5a')})};
 SPRU.walk=spr(x=>{P_(x,[[2,3,14,3,'#d9423a'],[16,0,3,9,'#d9423a'],[19,2,3,5,'#d9423a'],[3,14,6,7,'#6b5030'],[12,16,6,7,'#6b5030'],[3,20,6,2,'#222'],[12,22,6,2,'#222']])});
+SPRU.car=spr(x=>{P_(x,[[2,12,22,8,'#f4f6f8'],[2,15,22,3,'#2d6cb0'],[6,7,13,6,'#f4f6f8'],[8,8,4,4,'#9bd7f2'],[13,8,4,4,'#9bd7f2'],[9,4,3,3,'#e33a3a'],[12,4,3,3,'#3a6cf0'],[3,13,2,2,'#ffd34d'],[22,13,2,2,'#ff8a5c'],[5,19,5,5,'#222'],[16,19,5,5,'#222'],[7,21,1,1,'#999'],[18,21,1,1,'#999']])});
+SPRU.bld=spr(x=>{P_(x,[[2,5,22,18,'#8f9aa3'],[1,3,24,3,'#5c6770'],[4,8,4,4,'#ffe28a'],[11,8,4,4,'#ffe28a'],[18,8,4,4,'#ffe28a'],[4,15,4,4,'#ffe28a'],[18,15,4,4,'#ffe28a'],[11,16,4,7,'#6b5030']])});
 SPRU.ask=spr(x=>{EL(x,12,9,10,7,'#fff');P_(x,[[5,14,4,4,'#fff'],[10,6,4,3,'#d9423a'],[8,9,8,5,'#f4d9a8'],[11,11,2,3,'#8a5a30']])});
 function rndO(w){const A=w==='cold'?['scarf','beanie','cap']:['hat','cap','towel','none'];return{acc:A[Math.floor(Math.random()*A.length)],gl:Math.random()<.4?1:0,mask:Math.random()<.5?1:0}}
 const ACCT={scarf:'빨간 목도리',beanie:'빨간 털모자',cap:'파란 모자',hat:'밀짚모자',towel:'흰 수건',none:''};
@@ -164,11 +177,11 @@ function hud(){$('#chs').innerHTML=CH.map((n,i)=>`<div class="${i<S.ch?'on':i===
 const pen=(n,m)=>{S.pen+=n;S.wrong++;tick();return`<div class="fb no" role="status">${m} <b>−${n}초</b></div>`};
 const msg=(el,h)=>{el.insertAdjacentHTML('afterbegin',h)};
 function home(){clearInterval(T);$('#hud').hidden=true;$('#hint').hidden=true;$('#nb').hidden=true;
- $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">골든타임 스토리</span>5개 챕터</div><h1>12분 안에 어르신을 가족에게 연결하라</h1><p class="hint">공원·시장·터미널 중 한 곳에서 시작해 발견 → 접근 → 확인·신고 → 보호 → 인계까지, 챕터마다 다른 퍼즐을 풀어요. 계절, 어르신, 단서가 매번 달라집니다.</p><div class="tg"><span>단서 수집</span><span>대화 퍼즐</span><span>112 통화</span><span>응급 대응</span><span>인계 메모</span></div><button class="go" id="go">입장하기</button></section>`;$('#go').onclick=start}
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">골든타임 스토리</span>6개 챕터</div><h1>12분 안에 어르신을 가족에게 연결하라</h1><p class="hint">공원·시장·터미널 중 한 곳에서 시작해 발견 → 접근 → 확인·신고 → 보호 → 출동 → 인계까지, 챕터마다 다른 퍼즐을 풀어요. 계절, 어르신, 단서가 매번 달라집니다.</p><div class="tg"><span>단서 수집</span><span>대화 퍼즐</span><span>112 통화</span><span>응급 대응</span><span>경찰차 미로</span><span>인계 메모</span></div><button class="go" id="go">입장하기</button></section>`;$('#go').onclick=start}
 function start(){const p=rnd(5),ep=EPS[rnd(3)],w=rnd(2)?'cold':'hot';S={p,P:PT[p],o:rndO(w),ep,w,pen:0,wrong:0,hint:3,usedHint:0,ch:0,notes:{},t0:Date.now(),over:0,tag:'A01'+String(rnd(100000)).padStart(5,'0'),said:rnd(2)?'집에 가야 해요':'딸이 기다리고 있어요',
   state:w==='cold'?'추위에 떨고 계셨어요':'더위에 땀을 흘리며 목마르다고 하셨어요'};
  $('#hud').hidden=false;$('#hint').hidden=false;clearInterval(T);T=setInterval(tick,500);tick();$('#hint').onclick=giveHint;go(0)}
-function go(n){S.ch=n;hud();[c1,c2,c3,c4,c5][n]();window.scrollTo({top:0})}
+function go(n){document.removeEventListener('keydown',S.kd);S.ch=n;hud();[c1,c2,c3,c4,cM,c5][n]();window.scrollTo({top:0})}
 function giveHint(){if(!S.hint)return;S.hint--;S.usedHint++;hud();const m=S.hintMsg?S.hintMsg():'장면을 천천히 살펴보세요.';const el=document.querySelector('#stage .card');el&&msg(el,`<div class="fb ok">힌트: ${m}</div>`)}
 /* ===== 챕터 1: 발견 — 행동 관찰 + 인상착의 대조 ===== */
 function c1(){const P=S.P;
@@ -239,12 +252,49 @@ function c4(){const cold=S.w==='cold';
 function ev(){const O=[['곁에 앉아 "조금만 더 계셔요, 곧 가족이 와요" 하고 부드럽게 말한다',1],['팔을 붙잡아 앉힌다',0],['"가시면 안 돼요" 하고 소리친다',0]];S.hintMsg=()=>'붙잡거나 소리치지 말고 곁에서 부드럽게 말하세요.';
  $('#stage').querySelector('.card').insertAdjacentHTML('beforeend',`<div class="call">⚠️ 갑자기 어르신이 일어나 걸어가려 해요! 어떻게 할까요?</div><div class="opts" id="o2">${shuf(O).map(x=>`<button class="opt" data-g="${x[1]}">${x[0]}</button>`).join('')}</div>`);$('#o2').scrollIntoView({block:'nearest',behavior:'smooth'});
  document.querySelectorAll('#o2 .opt').forEach(b=>b.onclick=()=>{if(b.disabled)return;if(+b.dataset.g){document.querySelectorAll('#o2 .opt').forEach(x=>x.disabled=true);b.classList.add('ok');msg($('#log'),`<div class="fb ok">어르신이 다시 앉았어요. 곧 경찰이 도착합니다.</div><button class="go" id="nx" style="margin-top:8px">경찰 도착</button>`);$('#nx').onclick=()=>go(4)}else{b.disabled=true;b.classList.add('no');msg($('#log'),pen(15,'어르신이 더 불안해해요.'))}})}
-/* ===== 챕터 5: 인계 ===== */
+function mzGen(N,loop,minLen){let best=null;
+ for(let t=0;t<300;t++){const blk=new Set(),ix=(r,c)=>r*N+c;for(let i=0;i<N*N;i++)blk.add(i);
+  const seen=new Set([0]),st=[[0,0]];blk.delete(0);
+  while(st.length){const[r,c]=st[st.length-1],nb=[[r-2,c],[r+2,c],[r,c-2],[r,c+2]].filter(([a,b])=>a>=0&&b>=0&&a<N&&b<N&&!seen.has(ix(a,b)));
+   if(!nb.length){st.pop();continue}const[a,b]=nb[rnd(nb.length)];seen.add(ix(a,b));blk.delete(ix(a,b));blk.delete(ix((r+a)/2,(c+b)/2));st.push([a,b])}
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){if(!blk.has(ix(r,c)))continue;
+   if(N%2===0&&(r===N-1||c===N-1)){if(Math.random()<.45)blk.delete(ix(r,c));continue}
+   if((r%2)!==(c%2)&&r>0&&c>0&&r<N-1&&c<N-1&&Math.random()<loop)blk.delete(ix(r,c))}
+  const a=[N-1,0],h=[0,N-1];blk.delete(ix(a[0],a[1]));blk.delete(ix(h[0],h[1]));
+  const q=[[a[0],a[1],0]],sn=new Set([ix(a[0],a[1])]);let d=-1;
+  while(q.length){const[r,c,s]=q.shift();if(r===h[0]&&c===h[1]){d=s;break}[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc])=>{const R=r+dr,C=c+dc,k=R*N+C;if(R<0||C<0||R>=N||C>=N||blk.has(k)||sn.has(k))return;sn.add(k);q.push([R,C,s+1])})}
+  if(d<0)continue;const m={a,h,blk,d};if(d>=minLen)return m;if(!best||d>best.d)best=m}
+ return best}
+/* ===== 챕터 5: 출동 — 경찰차 미로 (12×12 + 시간 압박) ===== */
+const MZLIM=70;
+function cM(){const N=12,m=mzGen(N,.1,44);S.m=m;S.pos=m.a.slice();S.trail=new Set([m.a[0]*N+m.a[1]]);S.mt0=Date.now();S.mlate=0;S.mdone=0;
+ S.hintMsg=()=>'막다른 길이 많아요. 오른쪽 위의 어르신 쪽으로 가다가 막히면 되돌아가세요. 지나온 길은 노랗게 표시돼요.';
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 5</span>출동 · ${S.ep.nm}</div><h1>경찰차를 어르신께 안내하라</h1><p class="hint">112 신고가 접수됐다. 건물에 막힌 골목을 돌아 ${S.ep.loc}의 어르신께 가장 빨리 도착해야 한다. 막다른 길에서 시간을 잃지 마라.</p><div class="mzbar" id="mzbar"><span id="mzt">${MZLIM}초</span><i><b id="mzb"></b></i></div><div class="maze2" id="mz" style="grid-template-columns:repeat(${N},minmax(0,1fr))"></div><div class="dp2"><button class="u" data-d="u" aria-label="위">⬆️</button><button class="l" data-d="l" aria-label="왼쪽">⬅️</button><button class="d" data-d="d" aria-label="아래">⬇️</button><button class="r" data-d="r" aria-label="오른쪽">➡️</button></div><div id="mzlog"></div></section>`;
+ drawM2();document.querySelectorAll('.dp2 button').forEach(b=>b.onclick=()=>mv2(b.dataset.d));
+ S.kd=e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key];if(k){e.preventDefault();mv2(k)}};document.addEventListener('keydown',S.kd);
+ const id=S.mi=setInterval(()=>{if(S.over||S.ch!==4||S.mi!==id||S.mdone){clearInterval(id);return}
+  const e=(Date.now()-S.mt0)/1000,l=Math.max(0,MZLIM-e);const t=$('#mzt'),b=$('#mzb');if(!t)return;t.textContent=l>0?Math.ceil(l)+'초':'지연 중!';b.style.width=(l/MZLIM*100)+'%';
+  if(l<=0&&!S.mlate){S.mlate=1;$('#mzbar').classList.add('late');msg($('#mzlog'),pen(20,'출동이 늦어지고 있어요.'))}},250)}
+function drawM2(){const m=S.m,N=12,[pr,pc]=S.pos;let h='';
+ for(let r=0;r<N;r++)for(let c=0;c<N;c++){const k=r*N+c,cl=['mx',(r+c)%2?'b':''];let im='';
+  if(m.blk.has(k))im=`<img src="${SPRU.bld}" alt="">`;
+  if(r===m.h[0]&&c===m.h[1]){im=`<img src="${personURL(S.p,S.P,S.o)}" alt="어르신">`;cl.push('gp')}
+  if(S.trail.has(k))cl.push('tr');
+  if(r===pr&&c===pc)im=`<img src="${SPRU.car}" alt="경찰차">`;
+  else if(Math.abs(r-pr)+Math.abs(c-pc)===1&&!m.blk.has(k))cl.push('nb');
+  h+=`<button class="${cl.join(' ')}" data-r="${r}" data-c="${c}" aria-label="칸">${im}</button>`}
+ $('#mz').innerHTML=h;document.querySelectorAll('.mx.nb').forEach(b=>b.onclick=()=>go2(+b.dataset.r,+b.dataset.c))}
+function mv2(d){if(S.mdone)return;const[pr,pc]=S.pos,dd={u:[-1,0],d:[1,0],l:[0,-1],r:[0,1]}[d];go2(pr+dd[0],pc+dd[1])}
+function go2(r,c){const N=12,m=S.m;if(S.mdone||r<0||c<0||r>=N||c>=N||m.blk.has(r*N+c))return;
+ S.pos=[r,c];S.trail.add(r*N+c);drawM2();
+ if(r===m.h[0]&&c===m.h[1]){S.mdone=1;document.removeEventListener('keydown',S.kd);clearInterval(S.mi);const sec=Math.round((Date.now()-S.mt0)/1000);
+  msg($('#mzlog'),`<div class="fb ok">경찰차 도착! 출동 ${sec}초${S.mlate?' (지연 −20초 반영)':' · 제시간 도착'}</div><button class="go" id="nx" style="margin-top:8px">어르신께 다가가기</button>`);$('#nx').onclick=()=>go(5)}}
+/* ===== 챕터 6: 인계 ===== */
 function c5(){const P=S.P,other=EPS.filter(e=>e!==S.ep),alt=S.tag.replace(/\d/g,c=>String((+c+3)%10)),st2=S.w==='cold'?'더위에 땀을 흘리며 목마르다고 하셨어요':'추위에 떨고 계셨어요';
  const quotes=['집에 가야 해요','딸이 기다리고 있어요'],oq=quotes.find(x=>x!==S.said);
  const chips=shuf([[S.ep.loc,'p'],[other[0].loc,'x'],[S.tag,'t'],[alt,'x'],[S.state,'n'],[st2,'x'],[S.said,'q'],[oq,'x']]);const fill={p:null,t:null,n:null,q:null};let cur='p';
  S.hintMsg=()=>'앞에서 확인한 내용과 똑같은 카드를 빈칸에 넣으세요. 다른 장소·번호·계절 카드는 함정이에요.';
- $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 5</span>인계 · 경찰 도착</div><h1>인계 메모를 완성하라</h1>${scene('police',[],{big:1})}<div class="memo">발견 장소는 <button class="blank sel" data-b="p">　</button>이고, 인식표 번호는 <button class="blank" data-b="t">　</button>입니다. 어르신은 <button class="blank" data-b="n">　</button>. 어르신이 한 말은 "<button class="blank" data-b="q">　</button>"입니다.</div><div class="chips" id="ch">${chips.map((c,i)=>`<button class="chip" data-i="${i}">${c[0]}</button>`).join('')}</div><button class="go" id="ok" disabled>인계하기</button><div id="log"></div></section>`;
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 6</span>인계 · 경찰 도착</div><h1>인계 메모를 완성하라</h1>${scene('police',[],{big:1})}<div class="memo">발견 장소는 <button class="blank sel" data-b="p">　</button>이고, 인식표 번호는 <button class="blank" data-b="t">　</button>입니다. 어르신은 <button class="blank" data-b="n">　</button>. 어르신이 한 말은 "<button class="blank" data-b="q">　</button>"입니다.</div><div class="chips" id="ch">${chips.map((c,i)=>`<button class="chip" data-i="${i}">${c[0]}</button>`).join('')}</div><button class="go" id="ok" disabled>인계하기</button><div id="log"></div></section>`;
  const paint=()=>{document.querySelectorAll('.blank').forEach(b=>{const v=fill[b.dataset.b];b.textContent=v==null?'　':chips[v][0];b.classList.toggle('sel',b.dataset.b===cur)});document.querySelectorAll('#ch .chip').forEach((c,i)=>c.classList.toggle('used',Object.values(fill).includes(i)));$('#ok').disabled=Object.values(fill).some(v=>v==null)};
  document.querySelectorAll('.blank').forEach(b=>b.onclick=()=>{cur=b.dataset.b;fill[cur]=null;paint()});
  document.querySelectorAll('#ch .chip').forEach(c=>c.onclick=()=>{const i=+c.dataset.i;if(Object.values(fill).includes(i))return;fill[cur]=i;const nx=['p','t','n','q'].find(k=>fill[k]==null);if(nx)cur=nx;paint()});
