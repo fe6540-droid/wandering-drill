@@ -1,0 +1,246 @@
+<title>골든타임 방탈출</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--night:#0d3b44;--night2:#12515a;--mint:#5fe3b0;--sun:#ffc83d;--coral:#ff6b5e;--paper:#fbfdfc;--ink:#10292e;--mute:#5c7378;--line:#d5e3e0;--display:'Do Hyeon','Noto Sans KR',sans-serif;--body:'Noto Sans KR',system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--night);color:#fff;font-family:var(--body);padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:12px 28px;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.demo{font-size:.72rem;color:#bfe3da;text-align:center;border:1px dashed #5fe3b066;border-radius:999px;padding:5px 10px}
+.card{background:var(--paper);color:var(--ink);border-radius:22px;padding:18px 16px 16px;box-shadow:0 8px 0 #0a2c33;display:flex;flex-direction:column;gap:12px}
+.tagline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.78rem;color:var(--mute);font-weight:700}
+.badge{background:var(--night);color:var(--mint);font-family:var(--display);font-size:.95rem;padding:3px 11px;border-radius:99px}
+h1{font-family:var(--display);font-weight:400;font-size:1.5rem;line-height:1.25;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:400;font-size:1.1rem;margin:0}
+p{margin:0;line-height:1.55}.hint{font-size:.85rem;color:var(--mute)}
+.call{background:#eef5f3;border-radius:14px;padding:10px 12px;font-size:.92rem;line-height:1.55;border-left:5px solid var(--night2)}
+.opts{display:grid;gap:8px}
+.opt{font:inherit;font-weight:700;text-align:left;padding:12px 13px;border-radius:14px;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;line-height:1.4;min-height:48px}
+.opt:active{transform:translateY(2px)}.opt.ok{border-color:#1e9e6e;background:#d6f5e8}.opt.no{border-color:var(--coral);background:#ffe4e0}.opt.mid{border-color:#e3a90b;background:#fff3cf}.opt:disabled{cursor:default}
+.go{font:inherit;font-family:var(--display);font-size:1.15rem;border:0;border-radius:16px;padding:13px;background:var(--sun);color:#3a2a00;cursor:pointer;box-shadow:0 5px 0 #c99a14;width:100%}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 #c99a14}.go[disabled]{background:#e1e8e6;color:#8da0a3;box-shadow:0 5px 0 #c3cfcc;cursor:default}
+.go.ghost{background:#fff;border:2px solid var(--night2);color:var(--night2);box-shadow:none;font-size:1rem;padding:10px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.opt:focus-visible,.go:focus-visible,.obj:focus-visible,.key:focus-visible,.chip:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.fb{border-radius:14px;padding:12px 14px;font-size:.9rem;line-height:1.5}.fb.ok{background:#d6f5e8;color:#0d5b3f}.fb.no{background:#ffe4e0;color:#8a2a20}.fb.mid{background:#fff3cf;color:#6b4d00}
+.back{color:#bfe3da;font-size:.85rem;text-decoration:underline;text-underline-offset:3px;padding:4px 2px;align-self:flex-start}
+.reveal{width:min(170px,55%);margin:0 auto;border-radius:16px;overflow:hidden;aspect-ratio:1/3;box-shadow:0 0 0 4px var(--sun)}.reveal img{width:100%;height:100%;object-fit:cover;display:block}
+.stars{display:flex;justify-content:center;gap:8px}.stars svg{width:50px;height:50px}
+.res{text-align:center}.big{font-family:var(--display);font-size:1.7rem;color:#0d5b3f}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.shake{animation:shake .35s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.hud{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.clock{font-family:var(--display);font-size:1.4rem;color:var(--sun);font-variant-numeric:tabular-nums;line-height:1;text-align:right}.clock.low{color:var(--coral)}.clock small{display:block;font-family:var(--body);font-size:.62rem;color:#bfe3da;margin-top:3px}
+.chs{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.chs div{font-size:.66rem;font-weight:700;color:#9cc4bd;text-align:center}.chs div i{display:block;height:7px;border-radius:9px;background:#ffffff26;margin-bottom:3px}.chs div.on i{background:var(--mint)}.chs div.now i{background:var(--sun)}.chs div.now{color:#fff}
+.scn{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1/1;background:#9ad;border:4px solid #12292e}
+.bgs{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}.pt,.hs img,.reveal img,.ic{image-rendering:pixelated}.ic{width:22px;height:22px;vertical-align:-5px}
+.pt{position:absolute;left:50%;bottom:6%;height:64%;transform:translateX(-50%)}
+.pt.big{height:74%;bottom:5%}
+.hs{position:absolute;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:8px;border:3px solid #12292e;background:#fff;color:var(--ink);font:inherit;font-size:1.4rem;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0;box-shadow:0 3px 8px #0003;animation:pl 2s infinite}
+.hs.done{animation:none;background:#cfe6ff}.hs.dec{animation:none;background:#eee;opacity:.7}
+.hs img{width:100%;height:100%;display:block}.hs i{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:4px;pointer-events:none;font-style:normal;font-size:.6rem;font-weight:700;background:#12292e;color:#fff;padding:1px 5px;white-space:nowrap}
+@keyframes pl{0%,100%{box-shadow:0 3px 8px #0003,0 0 0 0 #ffc83d99}50%{box-shadow:0 3px 8px #0003,0 0 0 9px #ffc83d00}}
+.bub{position:absolute;left:6px;right:6px;top:6px;background:#fff;color:var(--ink);border-radius:14px;padding:9px 12px;font-weight:700;font-size:.9rem;line-height:1.45;box-shadow:0 4px 0 #0002}
+.note{background:#fff7dc;border-radius:14px;padding:10px 12px;font-size:.84rem;line-height:1.55}.note b{color:var(--night2)}.note ul{margin:4px 0 0;padding-left:18px}
+.nb{background:#ffffff14;color:#dff5ee;border-radius:14px;padding:10px 12px;font-size:.78rem;line-height:1.55}.nb b{color:var(--mint)}
+.meter{display:flex;flex-direction:column;gap:3px}.meter .l{display:flex;justify-content:space-between;font-size:.74rem;font-weight:700;color:var(--mute)}.meter .b{height:12px;border-radius:99px;background:#dfe9e6;overflow:hidden}.meter .b i{display:block;height:100%;width:30%;border-radius:99px;background:linear-gradient(90deg,#5fe3b0,#9af0cf);transition:width .5s}
+.tray{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.it{font:inherit;font-weight:700;font-size:.8rem;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:76px}.it b{font-size:1.7rem;line-height:1}.it.ok{border-color:#1e9e6e;background:#d6f5e8}.it.no{border-color:var(--coral);background:#ffe4e0}.it:disabled{cursor:default}
+.phone{background:#10292e;border-radius:22px;padding:14px;color:#fff;display:flex;flex-direction:column;gap:10px;border:4px solid #26444a}
+.phone .scr{background:#0b1d21;border-radius:12px;padding:10px;min-height:46px;font-family:var(--display);font-size:1.4rem;text-align:center;letter-spacing:.2em;color:var(--mint)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.pad button{font:inherit;font-family:var(--display);font-size:1.3rem;border:0;border-radius:14px;padding:10px 0;background:#26444a;color:#fff;cursor:pointer}
+.say{background:#26444a;border-radius:14px;padding:10px 12px;font-size:.9rem;line-height:1.5;font-weight:500}.say.me{background:#d6f5e8;color:#0d5b3f;align-self:flex-end}
+.digits{display:flex;justify-content:center;gap:4px;align-items:center}.dg{width:32px;height:42px;border-radius:9px;border:2px solid var(--line);display:grid;place-items:center;font-family:var(--display);font-size:1.2rem;background:#fff;color:var(--ink)}.dg.cur{border-color:var(--night2);background:#e6f6f1}.dg.pre{background:#e6f6f1;color:var(--night2)}
+.keys{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.key{font:inherit;font-family:var(--display);font-size:1.1rem;border:0;border-radius:10px;padding:9px 0;background:#e6efed;color:var(--ink);cursor:pointer;box-shadow:0 3px 0 #c3cfcc}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font:inherit;font-weight:700;font-size:.84rem;padding:8px 11px;border-radius:99px;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;line-height:1.2}.chip.used{opacity:.35}
+.memo{background:#fff7dc;border-radius:14px;padding:14px;line-height:2.3;font-size:.92rem;font-weight:500}
+.blank{display:inline-block;min-width:92px;border:0;border-bottom:3px solid var(--night2);padding:0 6px;text-align:center;font-weight:700;color:var(--night2);background:#ffffffaa;border-radius:6px 6px 0 0;cursor:pointer;font:inherit;font-size:.9rem}.blank.sel{background:#fff;box-shadow:0 0 0 3px #ffc83d88}.blank.ok{color:#0d5b3f;border-color:#1e9e6e}.blank.no{color:#8a2a20;border-color:var(--coral)}
+.tagsvg{width:min(250px,100%);display:block;margin:0 auto}
+.tg{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}.tg span{font-size:.72rem;background:#e6f6f1;color:var(--night2);border-radius:99px;padding:2px 9px;font-weight:700}
+</style>
+<div class="wrap">
+ <a class="back" href="games.html">← 게임 선택으로</a>
+ <div id="hud" hidden><div class="hud"><div class="chs" id="chs"></div><div class="clock"><span id="clk">12:00</span><small>남은 시간</small></div></div></div>
+ <div id="stage"></div>
+ <div id="nb" class="nb" hidden></div>
+ <button class="go ghost" id="hint" style="background:transparent;color:#bfe3da;border-color:#5fe3b055" hidden>힌트 보기 (남은 3번, −50점)</button>
+</div>
+<script>
+const PT=[{n:'김순자',top:'분홍색',bot:'베이지',shoe:'흰색 운동화'},{n:'박영수',top:'하늘색',bot:'남색',shoe:'회색 운동화'},{n:'이정희',top:'베이지',bot:'남색',shoe:'흰색 운동화'},{n:'최만석',top:'갈색',bot:'진회색',shoe:'검정 구두'},{n:'한복순',top:'보라색',bot:'검정',shoe:'자주색 운동화'}];
+const EPS=[{k:'park',nm:'행복공원',loc:'행복공원 동문 분수대 오른쪽 벤치',w:['공원 어디쯤이에요','나무 많은 곳이에요','공원 근처 길이에요']},{k:'market',nm:'중앙시장',loc:'중앙시장 정문 앞 파란 간판 약국 옆 횡단보도',w:['시장 근처예요','큰길 쪽이에요','저기 약국 쪽이에요']},{k:'terminal',nm:'버스터미널',loc:'버스터미널 3번 승강장 앞 편의점 맞은편',w:['버스 타는 데예요','터미널 어딘가예요','큰 건물 앞이에요']}];
+const $=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n),shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const star=o=>`<svg viewBox="0 0 24 24" style="width:50px;height:50px"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="${o?'#ffc83d':'#d5e3e0'}"/></svg>`;
+const TOTAL=720,CH=['발견','접근','확인·신고','보호','인계'];let S={},T=null;
+/* ===== 도트 그래픽 (160×160 장면, 40×66 인물, 24×24 아이콘) — 전부 코드로 그림 ===== */
+function mk(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.imageSmoothingEnabled=false;return[c,x]}
+const PR=(x,X,Y,w,h,c)=>{x.fillStyle=c;x.fillRect(X,Y,w,h)};
+function CI(x,cx,cy,r,c){for(let y=-r;y<=r;y++){const w=Math.floor(Math.sqrt(r*r-y*y)+.5);PR(x,cx-w,cy+y,w*2+1,1,c)}}
+function EL(x,cx,cy,rx,ry,c){for(let y=-ry;y<=ry;y++){const w=Math.floor(rx*Math.sqrt(1-(y*y)/(ry*ry+.01))+.5);PR(x,cx-w,cy+y,w*2+1,1,c)}}
+function OUT(c,col){const x=c.getContext('2d'),w=c.width,h=c.height,d=x.getImageData(0,0,w,h),p=d.data,o=new Uint8ClampedArray(p),A=(i,j)=>i<0||j<0||i>=w||j>=h?0:p[(j*w+i)*4+3],rg=[parseInt(col.slice(1,3),16),parseInt(col.slice(3,5),16),parseInt(col.slice(5,7),16)];
+ for(let j=0;j<h;j++)for(let i=0;i<w;i++)if(!A(i,j)&&(A(i-1,j)||A(i+1,j)||A(i,j-1)||A(i,j+1))){const k=(j*w+i)*4;o[k]=rg[0];o[k+1]=rg[1];o[k+2]=rg[2];o[k+3]=255}
+ x.putImageData(new ImageData(o,w,h),0,0);return c}
+const SH=(c,d)=>{const n=parseInt(c.slice(1),16),f=v=>Math.max(0,Math.min(255,v+d));return'#'+[(n>>16)&255,(n>>8)&255,n&255].map(f).map(v=>v.toString(16).padStart(2,'0')).join('')};
+const rngf=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+const _bg={};
+function bgURL(kind,w){const key=kind+w;if(_bg[key])return _bg[key];const[c,x]=mk(160,160),cold=w==='cold',rn=rngf(7);
+ const sky=cold?['#aebcc6','#b9c7d0','#c6d2d9','#d3dde2','#e0e8eb']:['#4aa8ee','#62b8f4','#7cc8fa','#98d6fc','#b5e4fe'];sky.forEach((s,i)=>PR(x,0,i*21,160,21,s));
+ if(cold){[[10,14,34],[88,8,44],[50,34,26],[120,30,30]].forEach(([a,b,l])=>{EL(x,a+l/2,b,l/2,5,'#eef3f5');EL(x,a+l/2,b+3,l/2-4,4,'#fff')});for(let i=0;i<60;i++)PR(x,Math.floor(rn()*158),Math.floor(rn()*104),rn()<.3?2:1,rn()<.3?2:1,'#fff')}
+ else{CI(x,130,22,19,'#ffe9a0');CI(x,130,22,14,'#ffd34d');CI(x,126,18,6,'#fff1b0');[[14,18,30],[60,10,26],[100,40,22]].forEach(([a,b,l])=>{EL(x,a+l/2,b,l/2,5,'#fff');EL(x,a+l/2-4,b-3,l/3,4,'#fff')})}
+ const g=kind==='park'?(cold?['#c5d3c0','#b7c8b2']:['#7ad46f','#62bd5b']):kind==='market'?['#c9b99f','#b8a78c']:kind==='terminal'?['#aab4b9','#9aa5ab']:['#bcc5c9','#aab4b9'];
+ PR(x,0,100,160,60,g[0]);for(let i=0;i<260;i++)PR(x,Math.floor(rn()*158),102+Math.floor(rn()*56),rn()<.5?2:1,1,g[1]);
+ if(kind==='park'){CI(x,30,108,34,cold?'#c3d1bf':'#8fd885');CI(x,120,110,40,cold?'#bccab8':'#86d07c');PR(x,0,108,160,52,g[0]);
+  for(let i=0;i<260;i++)PR(x,Math.floor(rn()*158),110+Math.floor(rn()*50),rn()<.5?2:1,1,g[1]);
+  for(let y=100;y<160;y++){const t=(y-100)/60,l=64-t*34,r=94+t*50;PR(x,Math.floor(l),y,Math.floor(r-l),1,'#ecdcb8')}for(let i=0;i<60;i++)PR(x,50+Math.floor(rn()*60),102+Math.floor(rn()*56),2,1,'#d8c79f');
+  [[18,70,15],[52,64,18],[142,68,16]].forEach(([tx,ty,r])=>{PR(x,tx-3,ty+4,6,38,'#7a5a36');PR(x,tx+1,ty+4,2,38,'#5f4429');const L=cold?['#a9bfa4','#9db598','#8aa386']:['#3f9a4c','#4fb25c','#2f7c3b'];CI(x,tx,ty,r,L[2]);CI(x,tx-3,ty-3,r-2,L[0]);CI(x,tx-6,ty-6,Math.floor(r/2),L[1]);for(let k=0;k<12;k++)PR(x,tx-r+Math.floor(rn()*r*2),ty-r+Math.floor(rn()*r*2),2,2,L[2])});
+  PR(x,8,126,48,5,'#a07b4f');PR(x,8,121,48,4,'#b8905e');PR(x,8,132,5,12,'#5f4429');PR(x,51,132,5,12,'#5f4429');PR(x,8,119,48,2,'#c9a373');
+  EL(x,128,128,26,9,'#8a9ba3');EL(x,128,126,23,7,'#9bd7f2');EL(x,128,125,12,3,'#c9ecfa');PR(x,126,96,5,30,'#c9d3d8');EL(x,128,96,12,5,'#9bd7f2');PR(x,121,103,2,10,'#bfe8fb');PR(x,134,103,2,10,'#bfe8fb')}
+ else if(kind==='market'){PR(x,0,98,160,3,'#8a7a64');
+  PR(x,0,46,54,54,'#e9c9a6');for(let j=0;j<7;j++)PR(x,0,52+j*7,54,1,'#d8b48c');PR(x,0,44,56,9,'#d96b4f');for(let i=0;i<7;i++)PR(x,i*8,44,4,9,'#fff4e0');PR(x,10,64,34,34,'#fff6e8');PR(x,12,66,13,30,'#7fb6d0');PR(x,28,66,13,30,'#7fb6d0');PR(x,26,66,2,30,'#fff6e8');
+  PR(x,104,36,56,64,'#cfe3d2');PR(x,104,34,56,10,'#3b7ea8');PR(x,114,56,36,42,'#f4fbff');PR(x,118,60,28,12,'#2a8a4a');PR(x,130,60,4,12,'#fff');PR(x,126,64,12,4,'#fff');PR(x,118,78,28,20,'#cfe9f5');
+  PR(x,60,70,36,30,'#f0d7a8');PR(x,58,64,40,8,'#e0884b');for(let i=0;i<5;i++)PR(x,58+i*8,64,4,8,'#fff4e0');PR(x,66,80,10,20,'#c89a62');PR(x,80,80,12,12,'#8fb3c4');
+  for(let i=0;i<7;i++)PR(x,i*26+4,128,16,3,'#fff');PR(x,0,112,160,3,'#9a8a74');PR(x,98,52,2,48,'#5b6b72');PR(x,94,50,10,4,'#ffd34d')}
+ else if(kind==='terminal'){PR(x,0,40,160,12,'#4a6b78');PR(x,0,52,160,48,'#dbe6ea');for(let i=0;i<6;i++){PR(x,i*27+6,60,20,30,'#9fc7d6');PR(x,i*27+8,62,3,26,'#c4e0ea')}PR(x,0,92,160,8,'#c5d3da');PR(x,0,98,160,3,'#8a949a');
+  PR(x,10,118,72,22,'#3b7ea8');PR(x,10,118,72,4,'#2f6a92');for(let i=0;i<4;i++)PR(x,15+i*16,124,12,9,'#cfe9f5');PR(x,2,126,10,10,'#ffd34d');CI(x,26,142,7,'#222');CI(x,26,142,3,'#aaa');CI(x,66,142,7,'#222');CI(x,66,142,3,'#aaa');PR(x,10,136,72,2,'#26506f');
+  PR(x,128,82,3,46,'#5b6b72');PR(x,118,74,24,16,'#2a8a4a');PR(x,121,78,18,3,'#fff');PR(x,121,84,10,2,'#fff');PR(x,140,100,12,24,'#f4efe3');PR(x,140,100,12,5,'#e0884b')}
+ else{PR(x,0,34,160,66,'#e4edf3');PR(x,0,34,160,14,'#1f4f7a');for(let j=0;j<5;j++)PR(x,0,52+j*9,160,1,'#cfdbe4');CI(x,80,66,17,'#1f4f7a');CI(x,80,66,14,'#fff');
+  [[80,54],[86,62],[83,72],[77,72],[74,62]].forEach(([a,b])=>CI(x,a,b,3,'#ffd34d'));PR(x,24,70,34,30,'#bcd3e2');PR(x,26,72,30,10,'#e8f3fa');PR(x,102,70,34,30,'#bcd3e2');PR(x,104,72,30,10,'#e8f3fa');PR(x,148,20,2,48,'#8a949a');PR(x,150,20,10,7,'#d9423a');
+  PR(x,6,116,76,26,'#fff');PR(x,6,116,76,8,'#1f4f7a');PR(x,6,122,76,3,'#d9423a');for(let i=0;i<3;i++)PR(x,12+i*22,127,16,9,'#bfe0f0');PR(x,26,111,10,5,'#ff6b5e');PR(x,38,111,10,5,'#4aa8ee');CI(x,24,142,7,'#222');CI(x,24,142,3,'#aaa');CI(x,64,142,7,'#222');CI(x,64,142,3,'#aaa');PR(x,0,98,160,3,'#8a949a');PR(x,100,100,50,2,'#fff')}
+ return _bg[key]=c.toDataURL()}
+/* ----- 인물 (인상착의 색이 그대로 반영됨) ----- */
+const COL={'분홍색':'#e8789a','하늘색':'#7cc4ee','베이지':'#e6d3a8','갈색':'#8a5a30','보라색':'#8a5ab0','남색':'#26407a','검정':'#2f2f2f','진회색':'#5f5f5f'};
+const SHC={'흰색 운동화':'#f4f4f4','회색 운동화':'#a9a9a9','검정 구두':'#1d1d1d','자주색 운동화':'#a0306a'};
+const LOOK=[{item:'scarf',hair:'#eeeeee'},{item:'towel',hair:'#e4e4e4',cap:'#3b6ea8'},{item:'hat',hair:'#ececec',glasses:1},{item:'',hair:'#dcdcdc'},{item:'beanie',hair:'#f2f2f2'}];
+const _pp={};
+function personURL(i,P){if(_pp[i])return _pp[i];const[c,x]=mk(42,72),L=LOOK[i],sk='#f2c9a0',skd='#dcae86',tp=COL[P.top],bt=COL[P.bot],sc=SHC[P.shoe];x.translate(1,6);
+ PR(x,11,43,8,19,bt);PR(x,21,43,8,19,bt);PR(x,19,43,2,19,SH(bt,-40));PR(x,26,43,3,19,SH(bt,-22));PR(x,11,43,2,19,SH(bt,18));
+ PR(x,9,61,11,4,sc);PR(x,20,61,11,4,sc);PR(x,9,64,11,1,'#222');PR(x,20,64,11,1,'#222');PR(x,10,61,5,1,SH(sc,40));PR(x,21,61,5,1,SH(sc,40));PR(x,14,61,1,2,SH(sc,-50));PR(x,25,61,1,2,SH(sc,-50));
+ PR(x,8,22,24,22,tp);PR(x,10,21,20,2,tp);PR(x,27,22,5,22,SH(tp,-26));PR(x,8,22,2,22,SH(tp,16));PR(x,8,42,24,2,SH(tp,-34));PR(x,19,24,2,18,SH(tp,-14));
+ PR(x,4,23,5,20,tp);PR(x,31,23,5,20,SH(tp,-14));PR(x,4,41,5,2,SH(tp,-34));PR(x,31,41,5,2,SH(tp,-44));CI(x,6,45,3,sk);CI(x,34,45,3,skd);
+ PR(x,17,18,6,4,skd);
+ PR(x,12,5,16,15,sk);CI(x,20,12,8,sk);PR(x,24,6,4,14,'#00000010');
+ for(let y=-9;y<=0;y++){const w=Math.floor(Math.sqrt(81-y*y)+.5);PR(x,20-w,8+y,w*2+1,1,L.hair)}PR(x,11,8,3,9,L.hair);PR(x,26,8,3,9,L.hair);PR(x,11,13,2,3,SH(L.hair,-30));PR(x,27,13,2,3,SH(L.hair,-30));PR(x,16,1,6,1,SH(L.hair,18));
+ PR(x,10,12,2,4,skd);PR(x,28,12,2,4,skd);
+ PR(x,14,12,3,3,'#fff');PR(x,23,12,3,3,'#fff');PR(x,15,13,2,2,'#1d2b2f');PR(x,24,13,2,2,'#1d2b2f');PR(x,14,10,4,1,SH(L.hair,-90));PR(x,23,10,4,1,SH(L.hair,-90));PR(x,20,14,2,3,skd);PR(x,18,18,4,1,'#c0605c');PR(x,13,16,2,1,'#f0a3a0');PR(x,26,16,2,1,'#f0a3a0');
+ if(L.glasses){[[13,11],[22,11]].forEach(([a,b])=>{PR(x,a,b,6,1,'#1d2b2f');PR(x,a,b+4,6,1,'#1d2b2f');PR(x,a,b,1,5,'#1d2b2f');PR(x,a+5,b,1,5,'#1d2b2f')});PR(x,19,12,3,1,'#1d2b2f')}
+ if(L.item==='scarf'){PR(x,13,19,14,4,'#e0443a');PR(x,15,23,5,9,'#e0443a');PR(x,15,23,5,2,'#c0332b');PR(x,16,27,3,1,'#ffd34d');PR(x,16,30,3,1,'#ffd34d')}
+ if(L.item==='towel'){PR(x,8,21,24,4,'#fff');PR(x,8,25,5,13,'#fff');PR(x,8,32,5,1,'#9fd0f0');PR(x,8,34,5,1,'#9fd0f0');PR(x,27,21,5,2,'#e3eef5')}
+ if(L.item==='hat'){PR(x,6,2,28,3,'#e8c36a');PR(x,12,-3,16,6,'#e8c36a');PR(x,12,0,16,2,'#d5493d');PR(x,6,4,28,1,'#c9a64e')}
+ if(L.item==='beanie'){for(let y=-9;y<=-1;y++){const w=Math.floor(Math.sqrt(81-y*y)+.5);PR(x,20-w,7+y,w*2+1,1,'#d9423a')}PR(x,11,5,18,3,'#fff');CI(x,20,-3,2,'#fff')}
+ if(L.cap){for(let y=-9;y<=-2;y++){const w=Math.floor(Math.sqrt(81-y*y)+.5);PR(x,20-w,8+y,w*2+1,1,L.cap)}PR(x,11,5,18,2,SH(L.cap,-30));PR(x,24,6,10,2,SH(L.cap,-30))}
+ return _pp[i]=OUT(c,'#12292e').toDataURL()}
+/* ----- 단서 아이콘 24×24 (투명 배경 + 외곽선) ----- */
+function spr(fn){const[c,x]=mk(26,26);x.translate(1,1);fn(x);return OUT(c,'#12292e').toDataURL()}
+const P_=(x,a)=>a.forEach(r=>PR(x,r[0],r[1],r[2],r[3],r[4]));
+const SPRU={
+ coatHot:spr(x=>{P_(x,[[5,7,14,14,'#3b6ea8'],[2,8,4,11,'#3b6ea8'],[18,8,4,11,'#3b6ea8'],[6,3,12,5,'#d9423a'],[6,3,12,1,'#ef6a5f'],[11,8,2,13,'#2c527f'],[12,11,2,2,'#ffd34d'],[12,15,2,2,'#ffd34d'],[2,17,4,2,'#2c527f'],[18,17,4,2,'#2c527f'],[5,20,14,2,'#2c527f']])}),
+ coatCold:spr(x=>{P_(x,[[6,7,12,13,'#fff'],[3,8,4,9,'#fff'],[17,8,4,9,'#fff'],[8,4,8,4,'#f2c9a0'],[11,7,2,3,'#e0e8ee'],[0,5,1,3,'#58a6e0'],[23,9,1,3,'#58a6e0'],[1,15,1,3,'#58a6e0'],[22,16,1,2,'#58a6e0'],[6,18,12,2,'#d9e4ea']])}),
+ shoes:spr(x=>{P_(x,[[1,13,10,6,'#fff'],[1,18,11,2,'#222'],[1,13,10,2,'#3b7ea8'],[5,15,5,1,'#3b7ea8'],[3,16,2,1,'#bbb'],[13,5,8,13,'#8a5a30'],[13,5,8,2,'#6b4423'],[12,17,10,3,'#222'],[15,9,4,1,'#b8793e'],[15,12,4,1,'#b8793e']])}),
+ loop:spr(x=>{[[11,2],[16,4],[19,9],[19,14],[16,19],[11,21],[6,19],[3,14],[3,9],[6,4]].forEach(([a,b],i)=>{PR(x,a,b,2,3,i%2?'#7a5a36':'#9a7a4f');PR(x,a+(i%2?2:-1),b+1,1,2,i%2?'#7a5a36':'#9a7a4f')});PR(x,18,2,5,2,'#d9423a');PR(x,21,0,2,6,'#d9423a');PR(x,19,6,2,1,'#d9423a')}),
+ look:spr(x=>{EL(x,7,12,6,7,'#fff');EL(x,18,12,6,7,'#fff');PR(x,2,4,10,2,'#1d2b2f');PR(x,13,4,10,2,'#1d2b2f');CI(x,9,12,3,'#1d2b2f');CI(x,20,12,3,'#1d2b2f');PR(x,9,10,2,2,'#fff');PR(x,20,10,2,2,'#fff')}),
+ bench:spr(x=>{P_(x,[[1,16,22,3,'#a07b4f'],[1,12,22,3,'#b8905e'],[3,19,3,5,'#5f4429'],[18,19,3,5,'#5f4429'],[8,5,7,8,'#3b6ea8'],[8,2,7,4,'#f2c9a0'],[8,1,7,2,'#e8e8e8'],[16,6,3,7,'#58c8f0'],[16,4,3,2,'#fff'],[14,8,3,2,'#f2c9a0']])}),
+ basket:spr(x=>{P_(x,[[3,11,18,11,'#b8793e'],[3,11,18,2,'#8a5a30'],[3,15,18,1,'#8a5a30'],[3,19,18,1,'#8a5a30'],[7,4,2,8,'#8a5a30'],[15,4,2,8,'#8a5a30'],[7,3,10,2,'#8a5a30'],[7,8,5,4,'#e0443a'],[13,8,5,4,'#3fa04c'],[10,6,4,4,'#ffd34d']])}),
+ grand:spr(x=>{P_(x,[[3,5,6,13,'#8a7a9a'],[3,1,6,5,'#f2c9a0'],[3,0,6,2,'#ddd'],[16,12,5,8,'#e0884b'],[16,8,5,5,'#f2c9a0'],[16,7,5,2,'#6b4423'],[9,14,7,2,'#f2c9a0'],[3,18,6,4,'#222'],[16,20,5,3,'#222']])}),
+ map:spr(x=>{P_(x,[[6,1,13,22,'#26444a'],[8,4,9,15,'#cfe9f5'],[11,6,3,5,'#d9423a'],[12,11,1,2,'#d9423a'],[8,14,9,1,'#3fa04c'],[8,16,5,1,'#3fa04c'],[11,21,3,1,'#fff']])}),
+ shirt:spr(x=>{P_(x,[[5,5,14,15,'#e8789a'],[1,6,5,9,'#e8789a'],[18,6,5,9,'#e8789a'],[9,3,6,3,'#f7e1c9'],[5,18,14,3,'#c9567a'],[11,8,2,10,'#d9658a']])}),
+ sign:spr(x=>{P_(x,[[11,10,3,14,'#6b5030'],[2,2,20,10,'#2a8a4a'],[3,3,18,8,'#3fa04c'],[5,5,12,2,'#fff'],[5,8,8,2,'#fff']])}),
+ tag:spr(x=>{EL(x,12,12,11,8,'#187838');EL(x,12,12,9,6,'#fff');PR(x,6,10,12,5,'#e6f4ea');PR(x,7,11,10,1,'#2f9a52');PR(x,7,13,6,1,'#2f9a52')}),
+ label:spr(x=>{P_(x,[[2,5,20,15,'#e8d8b8'],[4,7,16,11,'#fff'],[6,9,12,1,'#2f9a52'],[6,12,9,1,'#2f9a52'],[6,15,6,1,'#2f9a52'],[2,5,20,1,'#c9b48c']]);for(let i=0;i<10;i++)PR(x,3+i*2,19,1,1,'#8a7a5a')})};
+function scene(kind,hs,opt={}){const P=S.P;return `<div class="scn" id="scn"><img class="bgs" src="${bgURL(kind,S.w)}" alt="">${opt.pt===false?'':`<img class="pt ${opt.big?'big':''}" src="${personURL(S.p,P)}" alt="어르신">`}${opt.bub?`<div class="bub">${opt.bub}</div>`:''}${(hs||[]).map(h=>`<button class="hs ${h.cls||''}" data-id="${h.id}" style="left:${h.x}%;top:${h.y}%" aria-label="${h.lab||h.id}">${h.img?`<img src="${h.img}" alt="">`:h.em}${h.show?`<i>${h.show}</i>`:''}</button>`).join('')}</div>`}
+
+/* ===== 공통 ===== */
+const rem=()=>Math.max(0,TOTAL-Math.floor((Date.now()-S.t0)/1000)-S.pen);
+function tick(){const r=rem();$('#clk').textContent=fmt(r);$('#clk').classList.toggle('low',r<=90);if(!r&&!S.over)end(false)}
+function hud(){$('#chs').innerHTML=CH.map((n,i)=>`<div class="${i<S.ch?'on':i===S.ch?'now':''}"><i></i>${n}</div>`).join('');const N=S.notes,L=[];
+ if(N.signs)L.push(`배회 신호: ${N.signs}`);if(N.loc)L.push(`위치: ${N.loc}`);if(N.cl)L.push(`옷차림: ${N.cl}`);if(N.tag)L.push(`인식표: ${N.tag}`);if(N.state)L.push(`상태: ${N.state}`);if(N.said)L.push(`어르신 말: "${N.said}"`);
+ $('#nb').hidden=!L.length;$('#nb').innerHTML='<b>단서 노트</b><br>'+L.join('<br>');$('#hint').textContent=`힌트 보기 (남은 ${S.hint}번, −50점)`;$('#hint').disabled=!S.hint}
+const pen=(n,m)=>{S.pen+=n;S.wrong++;tick();return`<div class="fb no" role="status">${m} <b>−${n}초</b></div>`};
+const msg=(el,h)=>{el.insertAdjacentHTML('afterbegin',h)};
+function home(){clearInterval(T);$('#hud').hidden=true;$('#hint').hidden=true;$('#nb').hidden=true;
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">방탈출</span>5개 챕터</div><h1>12분 안에 어르신을 가족에게 연결하라</h1><p class="hint">공원·시장·터미널 중 한 곳에서 시작해 발견 → 접근 → 확인·신고 → 보호 → 인계까지, 챕터마다 다른 퍼즐을 풀어요. 계절, 어르신, 단서가 매번 달라집니다.</p><div class="tg"><span>단서 수집</span><span>대화 퍼즐</span><span>112 통화</span><span>응급 대응</span><span>인계 메모</span></div><button class="go" id="go">입장하기</button></section>`;$('#go').onclick=start}
+function start(){const p=rnd(5),ep=EPS[rnd(3)],w=rnd(2)?'cold':'hot';S={p,P:PT[p],ep,w,pen:0,wrong:0,hint:3,usedHint:0,ch:0,notes:{},t0:Date.now(),over:0,tag:'A01'+String(rnd(100000)).padStart(5,'0'),said:rnd(2)?'집에 가야 해요':'딸이 기다리고 있어요',
+  state:w==='cold'?'추위에 떨고 계셨어요':'더위에 땀을 흘리며 목마르다고 하셨어요'};
+ $('#hud').hidden=false;$('#hint').hidden=false;clearInterval(T);T=setInterval(tick,500);tick();$('#hint').onclick=giveHint;go(0)}
+function go(n){S.ch=n;hud();[c1,c2,c3,c4,c5][n]();window.scrollTo({top:0})}
+function giveHint(){if(!S.hint)return;S.hint--;S.usedHint++;hud();const m=S.hintMsg?S.hintMsg():'장면을 천천히 살펴보세요.';const el=document.querySelector('#stage .card');el&&msg(el,`<div class="fb ok">힌트: ${m}</div>`)}
+/* ===== 챕터 1: 발견 — 장면 속 단서 찾기 ===== */
+function c1(){const P=S.P,cold=S.w==='cold';
+ /* cap=장면에 항상 보이는 이름, obs=눌렀을 때 나오는 관찰 기록(정답 표시 없음), s=1 배회 신호 / 0 일상 / 2 정보 */
+ const sg=[{id:'s1',em:cold?'coatCold':'coatHot',cap:'겉옷',s:1,obs:cold?'한겨울인데 얇은 여름 옷차림이에요.':'한여름인데 두꺼운 겉옷을 겹쳐 입고 있어요.',lb:cold?'계절에 안 맞는 얇은 옷':'계절에 안 맞는 두꺼운 겉옷'},
+ {id:'s2',em:'shoes',cap:'발',s:1,obs:'양쪽 신발이 서로 달라요.',lb:'짝짝이 신발'},
+ {id:'s3',em:'loop',cap:'걸어온 길',s:1,obs:'같은 길을 벌써 두 번째 지나고 있어요.',lb:'같은 길 맴돌기'},
+ {id:'s4',em:'look',cap:'시선',s:1,obs:'아는 사람을 찾는 듯 계속 두리번거려요.',lb:'두리번거림'},
+ {id:'d1',em:'bench',cap:'벤치의 사람',s:0,obs:'한 시민이 벤치에서 물을 마시며 쉬고 있어요.'},
+ {id:'d2',em:'basket',cap:'장바구니',s:0,obs:'주민이 장바구니를 들고 단골 가게로 들어가요.'},
+ {id:'d3',em:'grand',cap:'산책하는 노인',s:0,obs:'다른 어르신이 손주와 손잡고 산책 중이에요.'},
+ {id:'d4',em:'map',cap:'지도 보는 사람',s:0,obs:'한 관광객이 지도 앱을 보며 길을 찾고 있어요.'},
+ {id:'i1',em:'shirt',cap:'옷 살펴보기',s:2,obs:`어르신 옷차림: 상의 ${P.top}, 하의 ${P.bot}, 신발 ${P.shoe}.`},
+ {id:'i2',em:'sign',cap:'표지판',s:2,obs:`표지판: ${S.ep.loc}.`}];
+ const slots=shuf([[11,26],[25,58],[12,72],[30,16],[72,18],[88,42],[76,64],[90,78],[60,12],[22,86],[8,46],[92,22]]);S.h1=sg.map((h,i)=>({...h,x:slots[i][0],y:slots[i][1]}));S.seen1={};S.sel1=new Set();
+ S.hintMsg=()=>Object.keys(S.seen1).length<8?'● 버튼을 모두 눌러 관찰 기록을 모으세요. 눌러도 감점은 없어요.':'위 "배회 신호 기준"과 비교해 보세요. 옷차림, 신발, 걸음, 시선이 어르신 자신의 모습이에요.';
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 1</span>발견 · ${S.ep.nm}</div><h1>이상한 점을 찾아라</h1><p class="hint">① 장면 속 ● 버튼을 눌러 관찰 기록을 모으세요 (눌러도 감점 없음). ② 기록을 보고 배회 신호 3개를 고르세요.</p>
+ <div class="call"><b>배회 신호 기준</b><br>• 계절에 맞지 않는 옷차림 • 짝짝이 신발·한쪽만 신기 • 같은 길을 맴돎 • 목적 없이 두리번거리며 걸음<br><span class="hint">쉬기, 쇼핑, 동행 산책, 길 찾기 같은 모습은 일상이에요.</span></div>
+ ${scene(S.ep.k,S.h1.map(h=>({id:h.id,img:SPRU[h.em],x:h.x,y:h.y,lab:h.cap,show:h.cap})))}<div id="log"></div><div id="pick" hidden><h2>배회 신호 3개를 고르세요</h2><div class="opts" id="pc"></div><button class="go" id="jd" disabled>판정하기</button></div><div id="jlog"></div><button class="go" id="nx" hidden>다가가기</button></section>`;
+ const refresh=()=>{const n=Object.keys(S.seen1).length;const obs=S.h1.filter(h=>S.seen1[h.id]&&h.s!==2);
+  if(S.seen1.i1&&S.seen1.i2){S.notes.cl=`${P.top} 상의 · ${P.bot} 하의 · ${P.shoe}`;S.notes.loc=S.ep.loc}
+  if(obs.length>=6&&S.seen1.i1&&S.seen1.i2){$('#pick').hidden=false;if(!S.pcBuilt||S.pcN!==obs.length){S.pcBuilt=1;S.pcN=obs.length;S.sel1.clear();$('#pc').innerHTML=obs.map(h=>`<button class="opt" data-id="${h.id}"><img class="ic" src="${SPRU[h.em]}" alt=""> ${h.obs}</button>`).join('');
+   document.querySelectorAll('#pc .opt').forEach(b=>b.onclick=()=>{if(b.disabled)return;const id=b.dataset.id;if(S.sel1.has(id))S.sel1.delete(id);else if(S.sel1.size<3)S.sel1.add(id);b.classList.toggle('mid',S.sel1.has(id));$('#jd').disabled=S.sel1.size!==3})}}hud()};
+ document.querySelectorAll('.hs').forEach(b=>b.onclick=()=>{const h=S.h1.find(x=>x.id===b.dataset.id);b.classList.add('done');if(!S.seen1[h.id]){S.seen1[h.id]=1;msg($('#log'),`<div class="fb" style="background:#eef5f3;color:var(--ink)"><img class="ic" src="${SPRU[h.em]}" alt=""> ${h.obs}</div>`)}refresh()});
+ $('#jd').onclick=()=>{const picked=[...S.sel1].map(id=>S.h1.find(x=>x.id===id));const wrong=picked.filter(h=>h.s!==1);
+  if(!wrong.length){document.querySelectorAll('#pc .opt').forEach(b=>{b.disabled=true;const h=S.h1.find(x=>x.id===b.dataset.id);if(h.s===1)b.classList.add('ok');b.classList.remove('mid')});S.notes.signs=picked.map(h=>h.lb).join(' · ');hud();$('#jd').remove();$('#jlog').innerHTML='<div class="fb ok">모두 맞아요! 어르신은 길을 잃은 상태로 보여요. 다가가 도와드려요.</div>';$('#nx').hidden=false;$('#nx').scrollIntoView({block:'nearest',behavior:'smooth'})}
+  else{wrong.forEach(h=>{const b=document.querySelector(`#pc .opt[data-id="${h.id}"]`);b.disabled=true;b.classList.remove('mid');b.classList.add('no');S.sel1.delete(h.id)});$('#jd').disabled=true;$('#jlog').innerHTML=pen(10*wrong.length,`${wrong.length}개는 일상적인 모습이에요(빨간색). 배회 신호 기준과 비교해 다시 고르세요.`)}};
+ $('#nx').onclick=()=>go(1)}
+/* ===== 챕터 2: 접근 — 대화 퍼즐 ===== */
+function c2(){const cold=S.w==='cold';
+ const R=[{p:'"누구요? 난 ' +S.said+'!"',c:[['안녕하세요. 잠깐만 같이 앉아 계셔도 될까요?',1,'부드럽게 권하면 마음이 풀려요.'],['안 돼요! 가시면 안 돼요!',0,'큰 소리는 불안을 키워요.'],['성함이랑 주소가 어떻게 되세요?',0,'캐묻기보다 안심이 먼저예요.']]},
+ {p:cold?'"추워… 손이 시려워."':'"목이 말라… 너무 더워."',c:[[cold?'많이 추우시죠? 이 겉옷 잠깐 덮어 드려도 될까요?':'많이 더우시죠? 그늘로 가서 물 한 모금 드실래요?',1,'공감하고 허락을 구하며 돕는 말이에요.'],['참으세요, 조금만 더 걸으면 돼요.',0,'참으라는 말은 도움이 안 돼요.'],['저는 몰라요. 경찰이 올 거예요.',0,'냉정한 말은 불안하게 해요.']]},
+ {p:'"이 스티커? 아무것도 아니야…"',c:[['괜찮으시면 번호만 잠깐 봐도 될까요? 가족이 찾고 있대요.',1,'목적을 쉽게 설명하고 허락을 구해요.'],['(억지로 스티커를 확인한다)',0,'강제로 만지면 놀라요.'],['그냥 두고 112에만 말한다',0,'번호가 있으면 신원 확인이 빨라요.']]}];
+ S.r2=0;S.m2=40;draw2(R)}
+function draw2(R){const r=R[S.r2];S.hintMsg=()=>'공감·허락·안심이 들어간 부드러운 말을 고르세요. 큰 소리, 따지기, 억지 행동은 오답이에요.';
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 2</span>접근 · 대화 ${S.r2+1}/3</div><h1>마음을 열 수 있는 말을 골라라</h1>${scene(S.ep.k,[],{big:1,bub:r.p})}<div class="meter"><div class="l"><span>어르신 안정</span><b id="mv">${S.m2}</b></div><div class="b"><i id="mb" style="width:${S.m2}%"></i></div></div><div class="opts" id="o">${shuf(r.c).map(c=>`<button class="opt" data-g="${c[1]}" data-f="${c[2]}">${c[0]}</button>`).join('')}</div><div id="log"></div></section>`;
+ document.querySelectorAll('#o .opt').forEach(b=>b.onclick=()=>{if(b.disabled)return;const g=+b.dataset.g;b.disabled=true;if(g){document.querySelectorAll('#o .opt').forEach(x=>x.disabled=true);b.classList.add('ok');S.m2=Math.min(100,S.m2+20);$('#mv').textContent=S.m2;$('#mb').style.width=S.m2+'%';msg($('#log'),`<div class="fb ok">${b.dataset.f}</div><button class="go" id="nx" style="margin-top:8px">${S.r2<2?'다음 대화':'인식표 확인하기'}</button>`);
+   $('#nx').onclick=()=>{S.r2++;if(S.r2>2){S.notes.state=S.state;S.notes.said=S.said;go(2)}else draw2(R)}}
+  else{b.classList.add('no');S.m2=Math.max(0,S.m2-10);$('#mv').textContent=S.m2;$('#mb').style.width=S.m2+'%';msg($('#log'),pen(10,b.dataset.f))}})}
+/* ===== 챕터 3: 확인·신고 — 인식표 해독 + 112 통화 ===== */
+const tagSvg=(a,b)=>`<svg class="tagsvg" viewBox="0 0 299 120"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6e66e"/><stop offset="1" stop-color="#187838"/></linearGradient></defs><rect x="2" y="2" width="295" height="116" rx="58" fill="url(#g)"/><rect x="14" y="14" width="271" height="92" rx="46" fill="#fff"/><text x="149.5" y="44" text-anchor="middle" font-size="13" font-weight="700" fill="#222" font-family="Noto Sans KR">가족들이 찾고 있는 분입니다.</text><text x="149.5" y="68" text-anchor="middle" font-size="20" font-weight="700" fill="#16a06a" font-family="Noto Sans KR">연락주세요! 112</text><rect x="52" y="76" width="195" height="24" fill="#fff" stroke="#2f9a52" stroke-width="2"/><text x="149.5" y="94" text-anchor="middle" font-size="16" font-weight="700" fill="#14532d" font-family="Noto Sans KR" letter-spacing="1.5">${a}</text></svg>`;
+function c3(){const t=S.tag,front=t.slice(0,6)+'···',inner=t.slice(6);S.got={f:0,l:0};
+ S.hintMsg=()=>!(S.got.f&&S.got.l)?'인식표 앞면(🏷️)과 옷 안쪽 라벨(🏷)을 둘 다 눌러 번호를 이어 붙이세요.':'앞면 앞부분 + 라벨 뒷부분을 이어 8자를 만드세요.';
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 3-A</span>확인 · 인식표</div><h1>번호가 반쯤 지워졌다</h1><p class="hint">인식표 번호가 한쪽만 보여요. 옷 안쪽에도 같은 번호 라벨이 있어요. 두 곳을 모두 확인해 번호를 완성하세요.</p>${scene(S.ep.k,[{id:'f',img:SPRU.tag,x:30,y:44,lab:'인식표 앞면',show:'인식표'},{id:'l',img:SPRU.label,x:70,y:58,lab:'옷 안쪽 라벨',show:'안쪽 라벨'}],{big:1})}<div id="log"></div><div id="entry" hidden><div class="lab" style="font-size:.78rem;font-weight:700;color:var(--mute)">인식표 번호 기록 (A01 + 5자리)</div><div class="digits" id="dg"></div><div class="keys" id="ks">${'0123456789'.split('').map(k=>`<button class="key" data-k="${k}">${k}</button>`).join('')}<button class="key" data-k="b">⌫</button><button class="key" data-k="ok">확인</button></div></div></section>`;
+ let v='';const paint=()=>{$('#dg').innerHTML=['A','0','1'].map(c=>`<div class="dg pre">${c}</div>`).join('')+[0,1,2,3,4].map(i=>`<div class="dg ${i===v.length?'cur':''}">${v[i]||''}</div>`).join('')};
+ document.querySelectorAll('.hs').forEach(b=>b.onclick=()=>{const id=b.dataset.id;S.got[id]=1;b.classList.add('done');const log=$('#log');log.innerHTML=(S.got.f?`<div class="fb ok">인식표 앞면: ${tagSvg(front)}</div>`:'')+(S.got.l?`<div class="fb ok" style="margin-top:6px">옷 안쪽 라벨: 번호 끝 3자리는 <b>${t.slice(5)}</b> 입니다.</div>`:'');
+  if(S.got.f&&S.got.l){$('#entry').hidden=false;paint()}});
+ $('#ks').onclick=e=>{const b=e.target.closest('.key');if(!b)return;const k=b.dataset.k;if(k==='b')v=v.slice(0,-1);else if(k==='ok'){if(v===t.slice(3)){S.notes.tag=t;hud();go3b()}else{msg($('#log'),pen(10,'번호가 달라요. 라벨과 인식표를 다시 비교해 보세요.'));v='';paint()}return}else if(v.length<5)v+=k;paint()}}
+function go3b(){S.q=0;S.ph='';S.hintMsg=()=>S.ph.length<3?'휴대폰 키패드로 112를 누르세요.':'단서 노트와 똑같은 내용을 고르세요.';
+ const Q=[{q:'112입니다. 어디세요?',a:S.ep.loc,w:S.ep.w},{q:'어르신 옷차림을 말씀해 주세요.',a:`${S.P.top} 상의, ${S.P.bot} 하의, ${S.P.shoe}`,w:[`${S.P.bot} 상의, ${S.P.top} 하의, ${S.P.shoe}`,`${S.P.top} 상의, ${S.P.bot==='검정'?'베이지':'검정'} 하의, 슬리퍼`,'잘 모르겠어요, 평범한 옷이에요']},{q:'배회인식표 번호가 있나요?',a:S.tag,w:[S.tag.replace(/\d$/,d=>(+d+3)%10),S.tag.replace(/\d(\d)$/,(m,x)=>String((+x+5)%10)+x),'번호는 못 봤어요']},{q:'지금 어르신 상태는 어떤가요?',a:S.state.replace('고 계셨어요','고 계세요').replace('하셨어요','하세요'),w:['아주 건강하고 괜찮아요','의식이 없고 쓰러져 계세요','잘 모르겠어요, 안 봤어요']}];
+ S.Q=Q;const dial=()=>{$('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 3-B</span>신고 · 112</div><h1>112에 전화하라</h1><div class="phone"><div class="scr" id="scr">${S.ph||'&nbsp;'}</div><div class="pad">${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`<button data-k="${k}" ${k===''?'disabled style="visibility:hidden"':''}>${k}</button>`).join('')}</div><button class="go" id="call">통화</button></div></section>`;
+  $('.pad').onclick=e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k;if(k==='⌫')S.ph=S.ph.slice(0,-1);else if(S.ph.length<5)S.ph+=k;$('#scr').innerHTML=S.ph||'&nbsp;'};
+  $('#call').onclick=()=>{if(S.ph==='112')talk();else{$('#scr').classList.add('shake');S.ph='';$('#scr').innerHTML='&nbsp;';msg($('#stage .card'),pen(5,'경찰 신고는 112예요.'))}}};dial()}
+function talk(){const q=S.Q[S.q];S.hintMsg=()=>'단서 노트와 똑같은 것을 고르세요. 모호한 표현은 오답이에요.';
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 3-B</span>통화 중 ${S.q+1}/4</div><div class="phone"><div class="say">📞 ${q.q}</div><div class="opts" id="o">${shuf([q.a,...q.w.filter(x=>x!==q.a)]).map(x=>`<button class="opt" data-v="${x}">${x}</button>`).join('')}</div></div><div id="log"></div></section>`;
+ document.querySelectorAll('#o .opt').forEach(b=>b.onclick=()=>{if(b.disabled)return;if(b.dataset.v===q.a){document.querySelectorAll('#o .opt').forEach(x=>x.disabled=true);b.classList.add('ok');msg($('#log'),`<div class="fb ok">접수됐어요.</div><button class="go" id="nx" style="margin-top:8px">${S.q<3?'계속 통화':'신고 완료'}</button>`);$('#nx').onclick=()=>{S.q++;S.q>3?go(3):talk()}}else{b.disabled=true;b.classList.add('no');msg($('#log'),pen(10,'접수원이 다시 물어봐요. 단서 노트와 달라요.'))}})}
+/* ===== 챕터 4: 보호 — 응급 대응 ===== */
+function c4(){const cold=S.w==='cold';
+ const G=cold?[['🧥','겉옷 덮어 드리기'],['☕','따뜻한 차 조금'],['🌬️','바람 막아 주기']]:[['⛱️','그늘로 모시기'],['💧','물 조금씩'],['🪭','부채질']];
+ const B=cold?[['🪭','부채질하기'],['🍦','아이스크림 드리기'],['💊','낯선 약 먹이기']]:[['🧣','두꺼운 이불 덮기'],['🔥','뜨거운 차 드리기'],['💊','낯선 약 먹이기']];
+ const items=shuf([...G.map(x=>[...x,1]),...B.map(x=>[...x,0])]);S.care=0;S.hintMsg=()=>cold?'추운 날에는 체온을 지키는 것이 우선이에요. 겉옷, 따뜻한 차, 바람막이.':'더운 날에는 열을 식히는 것이 우선이에요. 그늘, 물, 부채질.';
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 4</span>보호 · 경찰 도착 전</div><h1>${cold?'어르신이 추위에 떨고 있다':'어르신이 더위에 지쳐 있다'}</h1><p class="hint">경찰이 오기까지 어르신을 돌보세요. 알맞은 도움 3가지를 주세요.</p>${scene(S.ep.k,[],{big:1})}<div class="meter"><div class="l"><span>${cold?'체온':'탈진 회복'}</span><b id="mv">0%</b></div><div class="b"><i id="mb" style="width:0"></i></div></div><div class="tray" id="tr">${items.map((x,i)=>`<button class="it" data-g="${x[2]}"><b>${x[0]}</b>${x[1]}</button>`).join('')}</div><div id="log"></div></section>`;
+ document.querySelectorAll('.it').forEach(b=>b.onclick=()=>{if(b.disabled)return;b.disabled=true;if(+b.dataset.g){S.care++;b.classList.add('ok');$('#mv').textContent=Math.round(S.care/3*100)+'%';$('#mb').style.width=S.care/3*100+'%';msg($('#log'),`<div class="fb ok">좋아요. 어르신이 편안해져요.</div>`);if(S.care>=3)ev()}else{b.classList.add('no');msg($('#log'),pen(10,'어르신에게 위험하거나 도움이 안 돼요.'))}})}
+function ev(){const O=[['곁에 앉아 "조금만 더 계셔요, 곧 가족이 와요" 하고 부드럽게 말한다',1],['팔을 붙잡아 앉힌다',0],['"가시면 안 돼요" 하고 소리친다',0]];S.hintMsg=()=>'붙잡거나 소리치지 말고 곁에서 부드럽게 말하세요.';
+ $('#stage').querySelector('.card').insertAdjacentHTML('beforeend',`<div class="call">⚠️ 갑자기 어르신이 일어나 걸어가려 해요! 어떻게 할까요?</div><div class="opts" id="o2">${shuf(O).map(x=>`<button class="opt" data-g="${x[1]}">${x[0]}</button>`).join('')}</div>`);$('#o2').scrollIntoView({block:'nearest',behavior:'smooth'});
+ document.querySelectorAll('#o2 .opt').forEach(b=>b.onclick=()=>{if(b.disabled)return;if(+b.dataset.g){document.querySelectorAll('#o2 .opt').forEach(x=>x.disabled=true);b.classList.add('ok');msg($('#log'),`<div class="fb ok">어르신이 다시 앉았어요. 곧 경찰이 도착합니다.</div><button class="go" id="nx" style="margin-top:8px">경찰 도착</button>`);$('#nx').onclick=()=>go(4)}else{b.disabled=true;b.classList.add('no');msg($('#log'),pen(15,'어르신이 더 불안해해요.'))}})}
+/* ===== 챕터 5: 인계 ===== */
+function c5(){const P=S.P,other=EPS.filter(e=>e!==S.ep),alt=S.tag.replace(/\d/g,c=>String((+c+3)%10)),st2=S.w==='cold'?'더위에 땀을 흘리며 목마르다고 하셨어요':'추위에 떨고 계셨어요';
+ const quotes=['집에 가야 해요','딸이 기다리고 있어요'],oq=quotes.find(x=>x!==S.said);
+ const chips=shuf([[S.ep.loc,'p'],[other[0].loc,'x'],[S.tag,'t'],[alt,'x'],[S.state,'n'],[st2,'x'],[S.said,'q'],[oq,'x']]);const fill={p:null,t:null,n:null,q:null};let cur='p';
+ S.hintMsg=()=>'단서 노트의 내용과 똑같은 카드를 빈칸에 넣으세요. 다른 장소·번호·계절 카드는 함정이에요.';
+ $('#stage').innerHTML=`<section class="card"><div class="tagline"><span class="badge">챕터 5</span>인계 · 경찰 도착</div><h1>인계 메모를 완성하라</h1>${scene('police',[],{big:1})}<div class="memo">발견 장소는 <button class="blank sel" data-b="p">　</button>이고, 인식표 번호는 <button class="blank" data-b="t">　</button>입니다. 어르신은 <button class="blank" data-b="n">　</button>. 어르신이 한 말은 "<button class="blank" data-b="q">　</button>"입니다.</div><div class="chips" id="ch">${chips.map((c,i)=>`<button class="chip" data-i="${i}">${c[0]}</button>`).join('')}</div><button class="go" id="ok" disabled>인계하기</button><div id="log"></div></section>`;
+ const paint=()=>{document.querySelectorAll('.blank').forEach(b=>{const v=fill[b.dataset.b];b.textContent=v==null?'　':chips[v][0];b.classList.toggle('sel',b.dataset.b===cur)});document.querySelectorAll('#ch .chip').forEach((c,i)=>c.classList.toggle('used',Object.values(fill).includes(i)));$('#ok').disabled=Object.values(fill).some(v=>v==null)};
+ document.querySelectorAll('.blank').forEach(b=>b.onclick=()=>{cur=b.dataset.b;fill[cur]=null;paint()});
+ document.querySelectorAll('#ch .chip').forEach(c=>c.onclick=()=>{const i=+c.dataset.i;if(Object.values(fill).includes(i))return;fill[cur]=i;const nx=['p','t','n','q'].find(k=>fill[k]==null);if(nx)cur=nx;paint()});
+ $('#ok').onclick=()=>{const bad=['p','t','n','q'].filter(k=>chips[fill[k]][1]!==k);if(!bad.length){end(true);return}bad.forEach(k=>{const b=document.querySelector(`.blank[data-b="${k}"]`);b.classList.add('no');fill[k]=null});$('#log').innerHTML='';msg($('#log'),pen(15,`${bad.length}곳이 틀렸어요. 단서 노트와 비교해 보세요.`));setTimeout(()=>{document.querySelectorAll('.blank').forEach(b=>b.classList.remove('no'));cur=bad[0];paint()},900)}}
+function end(win){S.over=1;clearInterval(T);const r=rem(),sec=Math.floor((Date.now()-S.t0)/1000)+S.pen,pts=win?Math.max(0,500+r-S.usedHint*50-S.wrong*20):0,st=!win?1:pts>=900?3:pts>=700?2:1;
+ $('#hud').hidden=true;$('#hint').hidden=true;$('#nb').hidden=true;
+ $('#stage').innerHTML=`<section class="card res" style="text-align:center"><div class="tagline" style="justify-content:center"><span class="badge">${win?'탈출 성공':'시간 종료'}</span></div>${win?`<div class="reveal" style="width:120px;aspect-ratio:42/72;box-shadow:none;background:linear-gradient(#bfe8fb,#e9f7ef);border-radius:12px"><img src="${personURL(S.p,S.P)}" alt=""></div>`:''}<div class="stars" style="display:flex;justify-content:center;gap:8px">${[1,2,3].map(i=>star(i<=st)).join('')}</div><div class="big">${win?`${S.P.n} 어르신, 가족 품으로`:'아쉬워요, 한 번 더!'}</div><p>${win?`걸린 시간 ${fmt(sec)} (감점 포함) · 힌트 ${S.usedHint}번 · 실수 ${S.wrong}번`:'단서를 모으고 신고·보호·인계까지 이어 가는 연습을 다시 해 보세요.'}</p>${win?`<p>점수 <b>${pts}</b></p>`:''}<button class="go" id="again">새로운 상황으로 다시 하기</button><button class="go ghost" id="hm">처음으로</button></section>`;$('#again').onclick=start;$('#hm').onclick=home;window.scrollTo({top:0})}
+home();
+</script>

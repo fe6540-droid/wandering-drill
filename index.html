@@ -225,7 +225,7 @@ V.home=()=>({h:`<header class=hero><h1>배회·실종 치매환자<br>발견 모
 <div class=block><label class=lab for=ct>치매안심센터 선택</label><div class=sel><select id=ct><option value="">우리 지역 센터를 선택하세요</option>${CENTERS.map(c=>`<option ${c===S.center?'selected':''}>${c}</option>`).join('')}</select></div></div>
 <section class=card><h2>배회인식표란?</h2><div class=tagbox><div class=tagimg><img src="${TAGIMG}" alt="배회인식표 예시"></div></div><p style="margin:0">${TAGTXT}</p></section>
 <button class=btn id=start>훈련 시작</button><p id=m class=err role=alert></p>
-<div class=duo><a class="btn ghost" href="game.html"><b>🎮</b>게임으로 배우기</a><button class="btn ghost" id=vid><b>▶</b>영상 보기</button></div>
+<div class=duo><a class="btn ghost" href="games.html"><b>🎮</b>게임으로 배우기</a><button class="btn ghost" id=vid><b>▶</b>영상 보기</button></div>
 <footer class=foot><button class=link data-t=c>치매안심센터 관리자</button><button class=link data-t=m>광역치매센터 관리자</button></footer>`,
 i(){$('#ct').onchange=e=>S.center=e.target.value;$('#vid').onclick=()=>go('video');$$('.foot .link').forEach(b=>b.onclick=()=>go('login',{t:b.dataset.t}));
 $('#start').onclick=async()=>{if(!S.center)return $('#m').textContent='먼저 치매안심센터를 선택해 주세요.';
